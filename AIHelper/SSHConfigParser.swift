@@ -46,8 +46,11 @@ enum SSHConfigParser {
     /// Pure parser over SSH config file contents.
     ///
     /// - Recognizes `Host`, `HostName`, `User`, `Port` (case-insensitively).
-    /// - Expands a multi-alias `Host` line (e.g. `Host a b c`) into one entry per alias.
-    /// - Skips wildcard/pattern aliases (those containing `*` or `?`).
+    /// - Uses the **first alias** of a `Host` line (e.g. `Host web-1 web-1.internal` lists
+    ///   as `web-1`) — the primary name, not every alias.
+    /// - Strips inline `# comments` so they aren't parsed as extra host patterns.
+    /// - Skips wildcard/pattern blocks (first alias containing `*`, `?`, or starting `!`),
+    ///   e.g. `Host dev-vm-* web-*`.
     /// - Treats a `Match` line as ending the current `Host` block.
     static func parse(_ contents: String) -> [SSHHost] {
         var hosts: [SSHHost] = []
@@ -58,21 +61,24 @@ enum SSHConfigParser {
         var currentPort: Int?
 
         func flush() {
-            for alias in currentAliases where !alias.contains("*") && !alias.contains("?") {
-                hosts.append(SSHHost(alias: alias,
-                                     hostName: currentHostName,
-                                     user: currentUser,
-                                     port: currentPort))
+            defer {
+                currentAliases = []
+                currentHostName = ""
+                currentUser = ""
+                currentPort = nil
             }
-            currentAliases = []
-            currentHostName = ""
-            currentUser = ""
-            currentPort = nil
+            // Show only the first alias; skip pattern-only blocks (e.g. `Host *`).
+            guard let alias = currentAliases.first,
+                  !alias.contains("*"), !alias.contains("?"), !alias.hasPrefix("!") else { return }
+            hosts.append(SSHHost(alias: alias,
+                                 hostName: currentHostName,
+                                 user: currentUser,
+                                 port: currentPort))
         }
 
         for rawLine in contents.split(separator: "\n", omittingEmptySubsequences: false) {
-            let line = rawLine.trimmingCharacters(in: .whitespaces)
-            if line.isEmpty || line.hasPrefix("#") { continue }
+            let line = stripInlineComment(rawLine.trimmingCharacters(in: .whitespaces))
+            if line.isEmpty { continue }
 
             let (keyword, value) = splitDirective(line)
             switch keyword.lowercased() {
@@ -128,6 +134,21 @@ enum SSHConfigParser {
     }
 
     // MARK: - Private
+
+    /// Drop an inline `# comment`. A `#` only starts a comment when it's at the start of the
+    /// line or preceded by whitespace (so values like `foo#bar` are left intact). SSH config
+    /// technically only allows whole-line comments, but people write inline ones — and without
+    /// this they'd get parsed as extra `Host` patterns and shown as junk entries.
+    private static func stripInlineComment(_ line: String) -> String {
+        var result = ""
+        var prevWasSpace = true  // treat start-of-line like whitespace
+        for ch in line {
+            if ch == "#" && prevWasSpace { break }
+            result.append(ch)
+            prevWasSpace = (ch == " " || ch == "\t")
+        }
+        return result.trimmingCharacters(in: .whitespaces)
+    }
 
     /// Split `Keyword value` or `Keyword=value` (and `Keyword = value`) into a
     /// `(keyword, value)` pair, stripping surrounding quotes from the value.
