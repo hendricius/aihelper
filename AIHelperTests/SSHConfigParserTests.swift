@@ -22,6 +22,9 @@ final class SSHConfigParserTests: XCTestCase {
         HostName 192.0.2.12
         User shared
 
+    Host gamma delta          # Telegram: Gamma  (@some_bot)
+        HostName 192.0.2.14
+
     Host weirdsyntax
         HostName=192.0.2.13
 
@@ -50,13 +53,25 @@ final class SSHConfigParserTests: XCTestCase {
         XCTAssertFalse(hosts.contains { $0.alias.contains("?") })
     }
 
-    func testExpandsMultipleAliasesOnOneLine() {
+    func testUsesFirstAliasOnly() {
+        // `Host alpha beta` should list once, under the primary (first) alias.
         let hosts = SSHConfigParser.parse(fixture)
         let alpha = hosts.first { $0.alias == "alpha" }
-        let beta = hosts.first { $0.alias == "beta" }
         XCTAssertEqual(alpha?.hostName, "192.0.2.12")
-        XCTAssertEqual(beta?.hostName, "192.0.2.12")
-        XCTAssertEqual(beta?.user, "shared")
+        XCTAssertEqual(alpha?.user, "shared")
+        XCTAssertFalse(hosts.contains { $0.alias == "beta" })
+    }
+
+    func testStripsInlineComments() {
+        // An inline `# Telegram: ...` comment must not become extra host entries, and only
+        // the first alias is listed.
+        let hosts = SSHConfigParser.parse(fixture)
+        let gamma = hosts.first { $0.alias == "gamma" }
+        XCTAssertEqual(gamma?.hostName, "192.0.2.14")
+        XCTAssertFalse(hosts.contains { $0.alias == "delta" })
+        XCTAssertFalse(hosts.contains { $0.alias.hasPrefix("#") })
+        XCTAssertFalse(hosts.contains { $0.alias == "Telegram:" })
+        XCTAssertFalse(hosts.contains { $0.alias.contains("bot") })
     }
 
     func testKeyEqualsValueSyntax() {
