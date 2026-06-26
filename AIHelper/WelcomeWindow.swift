@@ -12,7 +12,8 @@ final class WelcomeWindowController {
     static let shared = WelcomeWindowController()
 
     /// Bump the suffix if the onboarding content changes enough to re-show it.
-    static let completedKey = "welcome_completed_v1"
+    /// v2 added the "Add your OpenAI key" step (the app can't transcribe without it).
+    static let completedKey = "welcome_completed_v2"
     /// The step the user last reached, so onboarding resumes there after a restart.
     static let stepKey = "welcome_step"
 
@@ -174,7 +175,12 @@ struct OnboardingView: View {
     // "Quit & Reopen"). Persisted on every change below.
     @State private var step = UserDefaults.standard.integer(forKey: WelcomeWindowController.stepKey)
 
-    private static let lastStep = 3
+    // The OpenAI key — same UserDefaults slot Settings → API writes to. Without a key the app
+    // can record but can't transcribe or format, so onboarding asks for it directly.
+    @AppStorage("openai_api_key") private var openAIKey = ""
+    @State private var showKey = false
+
+    private static let lastStep = 4
     private let violet = Color(red: 0.482, green: 0.361, blue: 0.902)
     private let blue = Color(red: 0.239, green: 0.482, blue: 0.941)
 
@@ -186,6 +192,7 @@ struct OnboardingView: View {
                 case 0: welcomeStep
                 case 1: hyperKeyStep
                 case 2: permissionsStep
+                case 3: apiKeyStep
                 default: doneStep
                 }
             }
@@ -325,6 +332,87 @@ struct OnboardingView: View {
         .animation(.easeInOut, value: model.inputMonitoring)
     }
 
+    /// True once a non-empty OpenAI key is stored (whitespace ignored).
+    private var hasOpenAIKey: Bool {
+        !openAIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Fully ready = OS permissions granted AND a key present, so transcription actually works.
+    private var fullyReady: Bool { model.allGranted && hasOpenAIKey }
+
+    private var apiKeyStep: some View {
+        VStack(spacing: 16) {
+            stepHeading("key.fill", "Add your OpenAI key")
+
+            Text("AIHelper uses **your own** OpenAI key to transcribe and format. It's the one thing the app needs to work, and it stays on this Mac.")
+                .font(.callout)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 34)
+
+            VStack(spacing: 10) {
+                HStack(spacing: 8) {
+                    Group {
+                        if showKey {
+                            TextField("sk-...", text: $openAIKey)
+                        } else {
+                            SecureField("sk-...", text: $openAIKey)
+                        }
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(.body, design: .monospaced))
+                    .autocorrectionDisabled(true)
+                    .textContentType(.password)
+
+                    Button {
+                        showKey.toggle()
+                    } label: {
+                        Image(systemName: showKey ? "eye.slash" : "eye")
+                            .frame(width: 20)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                    .help(showKey ? "Hide key" : "Show key")
+
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .opacity(hasOpenAIKey ? 1 : 0)
+                }
+
+                HStack {
+                    Link("Get a key from platform.openai.com ↗",
+                         destination: APIProvider.openAI.apiKeyURL)
+                        .font(.caption.weight(.medium))
+                    Spacer()
+                }
+            }
+            .padding(.horizontal, 30)
+            .onChange(of: openAIKey) { _, newValue in
+                // Strip stray whitespace/newlines from a pasted key so the auth header is valid.
+                let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmed != newValue { openAIKey = trimmed }
+            }
+
+            if hasOpenAIKey {
+                Label("Key saved on this Mac. You're ready to transcribe.", systemImage: "checkmark.seal.fill")
+                    .font(.caption)
+                    .foregroundStyle(.green)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 30)
+                    .transition(.opacity)
+            } else {
+                Text("Paste it here now, or add it later in Settings → API. Prefer AI Coordinator? You can switch providers there too.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 34)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 28)
+        .animation(.easeInOut, value: hasOpenAIKey)
+    }
+
     private var doneStep: some View {
         VStack(spacing: 18) {
             Spacer().frame(height: 8)
@@ -332,16 +420,16 @@ struct OnboardingView: View {
                 Circle()
                     .fill(LinearGradient(colors: [violet, blue], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 80, height: 80)
-                Image(systemName: model.allGranted ? "checkmark" : "mic.fill")
+                Image(systemName: fullyReady ? "checkmark" : "mic.fill")
                     .font(.system(size: 36, weight: .bold))
                     .foregroundStyle(.white)
             }
             VStack(spacing: 8) {
-                Text(model.allGranted ? "You're all set!" : "Almost there")
+                Text(fullyReady ? "You're all set!" : "Almost there")
                     .font(.system(size: 23, weight: .bold))
-                Text(model.allGranted
+                Text(fullyReady
                      ? "Try it now: hold **Caps Lock** and press **R**, say a sentence, then press **R** again. Your text lands right where your cursor is."
-                     : "You can finish granting permissions any time from the menu-bar popover or Settings — the app will light up as soon as you do.")
+                     : "You can finish granting permissions and add your OpenAI key any time from the menu-bar popover or Settings — the app will light up as soon as you do.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -356,9 +444,13 @@ struct OnboardingView: View {
             }
             .padding(.horizontal, 32)
 
-            Text("Add your API key and fine-tune everything in **Settings**.")
+            Text(hasOpenAIKey
+                 ? "Your OpenAI key is saved. Fine-tune everything in **Settings**."
+                 : "Add your OpenAI key in **Settings → API** to start transcribing.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(hasOpenAIKey ? Color.secondary : Color.orange)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 34)
 
             Spacer(minLength: 0)
 
