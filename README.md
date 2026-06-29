@@ -8,7 +8,7 @@ or casual message — all from the menu bar. It also ships with a **built-in Hyp
 **Open source · MIT licensed · created by Hendrik Kleinwächter.**
 
 <p align="center">
-  <img src="docs/screenshots/menu-popover.png" width="340" alt="AIHelper menu-bar popover: recording controls, hotkeys, hands-free wake word, your development machines, and recent transcriptions">
+  <img src="docs/screenshots/hero.png" width="840" alt="AIHelper on macOS: the menu-bar popover with recording controls and your development machines, next to the Settings window, on a macOS desktop">
 </p>
 
 ## Download
