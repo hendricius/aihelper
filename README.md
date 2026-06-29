@@ -50,7 +50,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
 - 🖥️ **Development Machines** overview — every host from your `~/.ssh/config`, with one-click copy / Terminal / browser
 - 🧠 Custom vocabulary to improve spelling of names and technical terms
 - 📋 Clipboard history manager (`⌃⌥⌘⇧C`)
-- ☕ **Keep Awake** — built-in Caffeine: keep your Mac awake so the screen won't lock, for a chosen 1–5 hours; the menu-bar mic fills in while it's active
+- ☕ **Keep Awake** — a built-in [Caffeine](https://www.caffeine-app.net/): keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, so you don't need the separate Caffeine app. The menu-bar mic fills in while it's active, like Caffeine's full cup
 - 📜 Transcription history with audio playback and full API debug logging — a growing archive of your own voice and phrasing (handy for, say, training a voice clone of yourself later)
 
 ## Screenshots
@@ -89,7 +89,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
   <tr>
     <td width="50%" valign="top">
       <img src="docs/screenshots/keep-awake.png" alt="Keep Awake settings with the keep-awake toggle, live countdown, and 1–5 hour duration picker"><br>
-      <b>Keep Awake (built-in Caffeine)</b> — keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, then it sleeps normally again.
+      <b>Keep Awake (built-in Caffeine)</b> — replaces the classic <a href="https://www.caffeine-app.net/">Caffeine</a> app: keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, then it sleeps normally again.
     </td>
     <td width="50%" valign="top">
       <img src="docs/screenshots/keep-awake-menubar.png" alt="The menu-bar microphone changes from outline to filled when Keep Awake is on"><br>
