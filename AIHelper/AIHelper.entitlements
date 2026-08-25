@@ -10,5 +10,9 @@
 	<true/>
 	<key>com.apple.security.device.speech-recognition</key>
 	<true/>
+	<!-- Screenshot Notes drives iTerm / System Events via AppleScript; required
+	     because release.sh signs with --options runtime (Hardened Runtime). -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
 </dict>
 </plist>
