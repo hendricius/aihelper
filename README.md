@@ -50,6 +50,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
 - 🖥️ **Development Machines** overview — every host from your `~/.ssh/config`, with one-click copy / Terminal / browser
 - 🧠 Custom vocabulary to improve spelling of names and technical terms
 - 📋 Clipboard history manager (`⌃⌥⌘⇧C`)
+- 📸 **Screenshot Notes** — grab the front window (`⌃⌥⌘⇧A`), drag boxes on the frozen image and dictate a note per box; `⌃⌥⌘⇧D` turns the whole session into a PDF on your clipboard, ready to paste into Claude, ChatGPT or an agent. Keeps a history of recent sessions so you can export one again
 - ☕ **Keep Awake** — a built-in [Caffeine](https://www.caffeine-app.net/): keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, so you don't need the separate Caffeine app. The menu-bar mic fills in while it's active, like Caffeine's full cup
 - 📜 Transcription history with audio playback and full API debug logging — a growing archive of your own voice and phrasing (handy for, say, training a voice clone of yourself later)
 
@@ -168,6 +169,7 @@ transfer. Nothing is sent anywhere; it just reads your local SSH config.
 - **Accessibility** — required for the global keyboard shortcuts (System Settings → Privacy & Security → Accessibility)
 - **Input Monitoring** — required for the built-in Hyper Key (Caps Lock → ⌃⌥⌘⇧)
 - **Speech Recognition** — required for the wake-word / stop-word hands-free mode (runs locally)
+- **Screen Recording** — required for Screenshot Notes (System Settings → Privacy & Security → Screen Recording)
 
 ## Project structure
 
@@ -188,6 +190,15 @@ AIHelper/
 ├── SSHConfigParser.swift              # Parses ~/.ssh/config for Development Machines
 ├── DevelopmentMachines*.swift         # Development Machines list (from ~/.ssh/config)
 ├── ClipboardHistory*.swift            # Clipboard history manager
+├── ScreenCaptureService.swift         # Captures the frontmost window (+ browser tab URL)
+├── QuickCapture*.swift / QuickNoteHUD.swift  # Freeze, drag an area, small note popup
+├── ScreenshotAnnotation*.swift        # Full editor for screenshots and notes
+├── ScreenshotNotesStore.swift         # The session being collected (folder + session.json)
+├── ScreenshotHistory*.swift           # Recent sessions: export again, reopen, delete
+├── ScreenshotSessionExporter.swift    # notes.md / PDF / ZIP for any session folder
+├── ScreenshotPDFExporter.swift / ScreenshotMarkdownExporter.swift
+├── AgentHandoffService.swift          # Hands a session to Claude Code locally or on a VM
+├── DictationController.swift          # Push-to-talk dictation for note fields
 └── Models/                            # Data models
 ```
 

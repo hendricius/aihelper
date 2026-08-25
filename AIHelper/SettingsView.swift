@@ -36,6 +36,12 @@ struct SettingsView: View {
     @AppStorage(HyperKeyManager.enabledKey) private var hyperKeyEnabled = true
     @AppStorage(WelcomeWindowController.completedKey) private var welcomeCompleted = false
     @StateObject private var devMachinesViewModel = DevelopmentMachinesViewModel()
+    @AppStorage(ScreenshotNotesStore.handoffFormatKey) private var screenshotHandoffFormat = ScreenshotNotesStore.HandoffFormat.pdf.rawValue
+    @AppStorage(ScreenshotNotesStore.captureModeKey) private var screenshotCaptureMode = ScreenshotNotesStore.CaptureMode.quick.rawValue
+    @AppStorage(ScreenshotNotesStore.autoDictateKey) private var screenshotAutoDictate = true
+    @AppStorage(ScreenshotNotesStore.outputFolderKey) private var screenshotOutputFolder = ScreenshotNotesStore.defaultOutputFolder
+    @AppStorage(ScreenshotHistoryStore.keepLimitKey) private var screenshotHistoryLimit = ScreenshotHistoryStore.defaultKeepLimit
+    @AppStorage(ScreenshotNotesStore.reviewBeforeExportKey) private var screenshotReviewBeforeExport = false
     @ObservedObject private var caffeine = CaffeineManager.shared
 
     private var activeProvider: APIProvider {
@@ -63,6 +69,7 @@ struct SettingsView: View {
         case stopWord
         case hyperKey
         case caffeine
+        case screenshotNotes
         case developmentMachines
         case api
         case email
@@ -130,6 +137,13 @@ struct SettingsView: View {
                         title: "Development Machines",
                         subtitle: devMachinesSubtitle,
                         section: .developmentMachines
+                    )
+
+                    settingsRow(
+                        icon: "camera.viewfinder",
+                        title: "Screenshot Notes",
+                        subtitle: "Annotate screenshots → PDF for your agent",
+                        section: .screenshotNotes
                     )
 
                 }
@@ -201,6 +215,188 @@ struct SettingsView: View {
         }
     }
 
+    private var screenshotNotesSettings: some View {
+        Form {
+            Section {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Capture & annotate")
+                        Text("Screenshot of the frontmost window (browser tab URL and title are recorded automatically), then mark areas and add notes.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Text(ShortcutConfig.annotateScreenshot.displayString)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Finish session")
+                        Text("Writes notes.md, notes.pdf and a ZIP and puts the hand-off file straight on the clipboard – ready for ⌘V.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Text(ShortcutConfig.finishScreenshotSession.displayString)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Review & edit first")
+                        Text("Opens a review of everything the agent will get; ↩ there exports.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Text(ShortcutConfig.reviewScreenshotSession.displayString)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+            } header: {
+                Label("Shortcuts", systemImage: "keyboard")
+            }
+
+            Section {
+                ShortcutCheatSheet(groups: [ShortcutCheatSheet.overlay, ShortcutCheatSheet.popup, ShortcutCheatSheet.editor], compact: true)
+                    .padding(.vertical, 4)
+            } header: {
+                Label("While capturing & editing", systemImage: "command")
+            }
+
+            Section {
+                Picker("Capture flow", selection: $screenshotCaptureMode) {
+                    ForEach(ScreenshotNotesStore.CaptureMode.allCases) { mode in
+                        Text(mode.label).tag(mode.rawValue)
+                    }
+                }
+                .pickerStyle(.radioGroup)
+                Toggle("Start dictation automatically when the note popup appears", isOn: $screenshotAutoDictate)
+                    .disabled(screenshotCaptureMode != ScreenshotNotesStore.CaptureMode.quick.rawValue)
+            } header: {
+                Label("Capture", systemImage: "scope")
+            } footer: {
+                Text("Quick: the screenshot is frozen on screen, you drag a rectangle, a small popup takes your note (typed or spoken) and you are back in the browser. ↩ without dragging adds a note for the whole page; ⌘N in the popup marks another area; ⌘E opens the editor.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Section {
+                Picker("After finishing, put on clipboard", selection: $screenshotHandoffFormat) {
+                    ForEach(ScreenshotNotesStore.HandoffFormat.allCases) { format in
+                        Text(format.label).tag(format.rawValue)
+                    }
+                }
+                .pickerStyle(.radioGroup)
+            } header: {
+                Label("Hand-off", systemImage: "paperplane")
+            } footer: {
+                Text("PDF/ZIP are put on the clipboard as a file: ⌘V attaches it in apps that accept files (claude.ai, Finder, Mail…); terminals paste its path. The PDF has every screenshot, annotated copy and crop embedded; the ZIP additionally contains notes.md and the PNGs. Choose 'Markdown text' to paste the notes as text instead. notes.md, PDF and ZIP are always written to the output folder regardless of this choice.")
+
+                Toggle("Show a review window before \(ShortcutConfig.finishScreenshotSession.displayString) exports", isOn: $screenshotReviewBeforeExport)
+                Text("Off: \(ShortcutConfig.finishScreenshotSession.displayString) exports immediately and puts the hand-off on the clipboard. The review is still available via the menu bar popover or the editor's Review & Export button.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Section {
+                HStack {
+                    TextField("Output folder", text: $screenshotOutputFolder)
+                        .textFieldStyle(.roundedBorder)
+                        .font(.system(.caption, design: .monospaced))
+                    Button("Choose…") {
+                        let panel = NSOpenPanel()
+                        panel.canChooseDirectories = true
+                        panel.canChooseFiles = false
+                        panel.canCreateDirectories = true
+                        panel.directoryURL = ScreenshotNotesStore.rootFolder
+                        if panel.runModal() == .OK, let url = panel.url {
+                            screenshotOutputFolder = url.path
+                        }
+                    }
+                    Button("Reset") {
+                        screenshotOutputFolder = ScreenshotNotesStore.defaultOutputFolder
+                    }
+                    .disabled(screenshotOutputFolder == ScreenshotNotesStore.defaultOutputFolder)
+                    Button("Open Folder") {
+                        ScreenshotNotesStore.shared.revealSessionFolder()
+                    }
+                }
+                Text("New sessions are created here. The session that is currently open keeps its folder.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                HStack {
+                    Text("History")
+                    Spacer()
+                    Stepper(value: $screenshotHistoryLimit, in: ScreenshotHistoryStore.keepLimitRange) {
+                        Text("keep the last \(screenshotHistoryLimit) session\(screenshotHistoryLimit == 1 ? "" : "s")")
+                            .foregroundColor(.secondary)
+                    }
+                    .onChange(of: screenshotHistoryLimit) { _, _ in ScreenshotHistoryStore.shared.refreshAndPrune() }
+                    Button("Show History") {
+                        ScreenshotHistoryWindowController.shared.showWindow()
+                    }
+                }
+                Text("Exported sessions stay in the output folder and are listed in the History (menu bar popover → Screenshot Notes → History), where their PDF/ZIP/Markdown can be copied again, sent to an agent or reopened. Older sessions beyond this number are deleted automatically when a new one is exported.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                HStack {
+                    Text("Log file")
+                    Spacer()
+                    Text(ScreenshotNotesLog.fileURL.path)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Button("Open Log") {
+                        NSWorkspace.shared.activateFileViewerSelecting([ScreenshotNotesLog.fileURL])
+                    }
+                }
+                HStack {
+                    Text("Current session")
+                    Spacer()
+                    Text("\(ScreenshotNotesStore.shared.session.captures.count) screenshot(s)")
+                        .foregroundColor(.secondary)
+                    Button("Open") {
+                        ScreenshotAnnotationWindowController.shared.showSession()
+                    }
+                    .disabled(ScreenshotNotesStore.shared.session.captures.isEmpty)
+                }
+            } header: {
+                Label("Output", systemImage: "folder")
+            } footer: {
+                Text("Each session is a folder containing notes.md, the original screenshots, annotated copies with numbered markers and crops of every marked area. notes.md references all images with absolute paths; finishing a session also writes notes.pdf (all images embedded) and copies the full Markdown to the clipboard so you can paste it straight into your agent.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Section {
+                HStack {
+                    Image(systemName: ScreenCaptureService.shared.hasScreenRecordingPermission ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(ScreenCaptureService.shared.hasScreenRecordingPermission ? .green : .red)
+                    Text("Screen Recording")
+                    Spacer()
+                    if !ScreenCaptureService.shared.hasScreenRecordingPermission {
+                        Button("Grant Access") {
+                            ScreenCaptureService.shared.requestScreenRecordingPermission()
+                        }
+                    }
+                }
+            } header: {
+                Label("Permissions", systemImage: "lock.shield")
+            } footer: {
+                Text("macOS requires Screen Recording permission to capture windows. Browser URLs are read via Apple Events (Automation permission, prompted on first use).")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
+
     @ViewBuilder
     private func detailView(for section: SettingsSection) -> some View {
         switch section {
@@ -220,6 +416,8 @@ struct SettingsView: View {
             caffeineSettings
         case .developmentMachines:
             developmentMachinesSettings
+        case .screenshotNotes:
+            screenshotNotesSettings
         case .api:
             apiSettings
         case .email:

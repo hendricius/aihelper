@@ -97,6 +97,47 @@ actor ScreenshotTransferService {
     // MARK: - Private Methods
 
     /// Read PNG image data from the macOS clipboard
+    // MARK: - Screenshot Notes hand-off
+
+    /// Host alias (from `~/.ssh/config`) of the VM the current iTerm session is
+    /// connected to. Used by Screenshot Notes to ship a session to that machine.
+    func detectCurrentHostAlias() async throws -> String {
+        try await resolveTargetAlias()
+    }
+
+    /// Copies a whole directory to the host via `scp -r`.
+    func transferDirectory(localURL: URL, hostAlias: String, remoteParent: String) async throws {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/scp")
+        process.arguments = [
+            "-r",
+            "-o", "StrictHostKeyChecking=no",
+            "-o", "ConnectTimeout=30",
+            localURL.path,
+            "\(hostAlias):\(remoteParent)"
+        ]
+        let errorPipe = Pipe()
+        process.standardError = errorPipe
+        process.standardOutput = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            throw TransferError.transferFailed("Failed to run SCP: \(error.localizedDescription)")
+        }
+        if process.terminationStatus != 0 {
+            let errorOutput = String(data: errorPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?
+                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            throw TransferError.transferFailed(errorOutput.isEmpty ? "SCP exit code \(process.terminationStatus)" : errorOutput)
+        }
+        logger.info("Directory \(localURL.lastPathComponent) transferred to \(hostAlias):\(remoteParent)")
+    }
+
+    /// Types a line into the current iTerm session (and presses return).
+    func typeInTerminal(_ text: String) async {
+        await typeInCurrentTerminal(text)
+    }
+
     private func getClipboardImageData() async throws -> Data {
         let imageData: Data? = await MainActor.run {
             let pasteboard = NSPasteboard.general
