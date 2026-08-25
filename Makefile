@@ -3,11 +3,15 @@
 release:
 	@bash scripts/release.sh AIHelper.zip
 
+# Reads only the keys it needs, one line at a time. Do NOT `export $(... | xargs)`
+# the whole file: values containing spaces (e.g. SIGN_IDENTITY) get split into
+# bogus tokens that leak into the environment and break xcodebuild.
 load-env:
 	@if [ -f .env ]; then \
-		export $$(grep -v '^#' .env | xargs) && \
-		[ -n "$$AIC_API_KEY" ] && defaults write com.aihelper.app aicoordinator_api_key "$$AIC_API_KEY" || true; \
-		[ -n "$$OPENAI_API_KEY" ] && defaults write com.aihelper.app openai_api_key "$$OPENAI_API_KEY" || true; \
+		AIC=$$(grep -E '^AIC_API_KEY=' .env | head -1 | cut -d= -f2- | sed 's/^"//;s/"$$//'); \
+		OAI=$$(grep -E '^OPENAI_API_KEY=' .env | head -1 | cut -d= -f2- | sed 's/^"//;s/"$$//'); \
+		[ -n "$$AIC" ] && defaults write com.aihelper.app aicoordinator_api_key "$$AIC" || true; \
+		[ -n "$$OAI" ] && defaults write com.aihelper.app openai_api_key "$$OAI" || true; \
 		echo "Loaded API key(s) from .env"; \
 	else \
 		echo "No .env file found. Copy .env.example to .env and add your API key."; \
