@@ -53,10 +53,17 @@ enum APIProvider: String, CaseIterable, Identifiable {
     }
 
     /// Model used for audio transcription.
+    ///
+    /// `gpt-transcribe` is OpenAI's recommended speech-to-text model and clearly
+    /// beats the legacy `whisper-1`: with a vocabulary hint in `prompt`,
+    /// whisper-1 sometimes echoes the hint instead of transcribing, which
+    /// gpt-transcribe does not do. It speaks the same multipart endpoint and
+    /// returns the same `text` field (plus `languages`/`usage`, which we ignore).
+    /// AI Coordinator proxies the model name straight through to OpenAI.
     var transcriptionModel: String {
         switch self {
-        case .aiCoordinator: return "whisper-1"
-        case .openAI: return "whisper-1"
+        case .aiCoordinator: return "gpt-transcribe"
+        case .openAI: return "gpt-transcribe"
         }
     }
 
