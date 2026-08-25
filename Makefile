@@ -32,6 +32,21 @@ install: build
 	@rm -rf /Applications/AIHelper.app
 	@# Copy new build
 	@cp -R "$$(xcodebuild -project AIHelper.xcodeproj -scheme AIHelper -configuration Debug -showBuildSettings 2>/dev/null | grep -m1 'BUILT_PRODUCTS_DIR' | awk '{print $$3}')/AIHelper.app" /Applications/
+	@# Optional: sign with a real identity so macOS keeps the granted
+	@# permissions (Accessibility, Screen Recording, ...) across reinstalls.
+	@# Set SIGN_IDENTITY in .env or the environment; without it the build
+	@# stays ad-hoc signed, which is fine but re-prompts after each install.
+	@IDENTITY="$(SIGN_IDENTITY)"; \
+	if [ -z "$$IDENTITY" ] && [ -f .env ]; then \
+		IDENTITY=$$(grep -E '^SIGN_IDENTITY=' .env | head -1 | cut -d= -f2- | sed 's/^"//;s/"$$//'); \
+	fi; \
+	if [ -n "$$IDENTITY" ]; then \
+		echo "Signing with: $$IDENTITY"; \
+		codesign --force --deep --options runtime --timestamp \
+			--entitlements AIHelper/AIHelper.entitlements \
+			--sign "$$IDENTITY" /Applications/AIHelper.app || \
+			echo "Signing failed - continuing with the ad-hoc signed build"; \
+	fi
 	@echo "Installed! Launching AIHelper..."
 	@open /Applications/AIHelper.app
 
