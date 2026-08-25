@@ -49,6 +49,27 @@
 		A1000045 /* HyperKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000045 /* HyperKeyManager.swift */; };
 		A1000046 /* CaffeineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000046 /* CaffeineManager.swift */; };
 		A1000047 /* WelcomeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000047 /* WelcomeWindow.swift */; };
+		A100005C /* ScreenshotNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005C /* ScreenshotNote.swift */; };
+		A100005B /* ShortcutCheatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005B /* ShortcutCheatSheet.swift */; };
+		A100005A /* ScreenshotSessionExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005A /* ScreenshotSessionExporter.swift */; };
+		A1000059 /* ScreenshotPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000059 /* ScreenshotPreviewView.swift */; };
+		A1000058 /* ScreenshotPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000058 /* ScreenshotPDFExporter.swift */; };
+		A1000057 /* ScreenshotNotesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000057 /* ScreenshotNotesStore.swift */; };
+		A1000056 /* ScreenshotNotesLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000056 /* ScreenshotNotesLog.swift */; };
+		A1000055 /* ScreenshotMarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000055 /* ScreenshotMarkdownExporter.swift */; };
+		A1000054 /* ScreenshotImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000054 /* ScreenshotImageRenderer.swift */; };
+		A1000053 /* ScreenshotHistoryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000053 /* ScreenshotHistoryWindowController.swift */; };
+		A1000052 /* ScreenshotHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000052 /* ScreenshotHistoryView.swift */; };
+		A1000051 /* ScreenshotHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000051 /* ScreenshotHistoryStore.swift */; };
+		A1000050 /* ScreenshotAnnotationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000050 /* ScreenshotAnnotationWindowController.swift */; };
+		A100004F /* ScreenshotAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004F /* ScreenshotAnnotationView.swift */; };
+		A100004E /* ScreenCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004E /* ScreenCaptureService.swift */; };
+		A100004D /* QuickNoteHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004D /* QuickNoteHUD.swift */; };
+		A100004C /* QuickCaptureOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004C /* QuickCaptureOverlay.swift */; };
+		A100004B /* QuickCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004B /* QuickCaptureController.swift */; };
+		A100004A /* GlobalDictationBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004A /* GlobalDictationBridge.swift */; };
+		A1000049 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000049 /* DictationController.swift */; };
+		A1000048 /* AgentHandoffService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000048 /* AgentHandoffService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +118,27 @@
 		A2000045 /* HyperKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperKeyManager.swift; sourceTree = "<group>"; };
 		A2000046 /* CaffeineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaffeineManager.swift; sourceTree = "<group>"; };
 		A2000047 /* WelcomeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeWindow.swift; sourceTree = "<group>"; };
+		A200005C /* ScreenshotNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNote.swift; sourceTree = "<group>"; };
+		A200005B /* ShortcutCheatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutCheatSheet.swift; sourceTree = "<group>"; };
+		A200005A /* ScreenshotSessionExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSessionExporter.swift; sourceTree = "<group>"; };
+		A2000059 /* ScreenshotPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewView.swift; sourceTree = "<group>"; };
+		A2000058 /* ScreenshotPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPDFExporter.swift; sourceTree = "<group>"; };
+		A2000057 /* ScreenshotNotesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNotesStore.swift; sourceTree = "<group>"; };
+		A2000056 /* ScreenshotNotesLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNotesLog.swift; sourceTree = "<group>"; };
+		A2000055 /* ScreenshotMarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMarkdownExporter.swift; sourceTree = "<group>"; };
+		A2000054 /* ScreenshotImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotImageRenderer.swift; sourceTree = "<group>"; };
+		A2000053 /* ScreenshotHistoryWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryWindowController.swift; sourceTree = "<group>"; };
+		A2000052 /* ScreenshotHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryView.swift; sourceTree = "<group>"; };
+		A2000051 /* ScreenshotHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryStore.swift; sourceTree = "<group>"; };
+		A2000050 /* ScreenshotAnnotationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotAnnotationWindowController.swift; sourceTree = "<group>"; };
+		A200004F /* ScreenshotAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotAnnotationView.swift; sourceTree = "<group>"; };
+		A200004E /* ScreenCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureService.swift; sourceTree = "<group>"; };
+		A200004D /* QuickNoteHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteHUD.swift; sourceTree = "<group>"; };
+		A200004C /* QuickCaptureOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureOverlay.swift; sourceTree = "<group>"; };
+		A200004B /* QuickCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureController.swift; sourceTree = "<group>"; };
+		A200004A /* GlobalDictationBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalDictationBridge.swift; sourceTree = "<group>"; };
+		A2000049 /* DictationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationController.swift; sourceTree = "<group>"; };
+		A2000048 /* AgentHandoffService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentHandoffService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +196,26 @@
 				A2000045 /* HyperKeyManager.swift */,
 				A2000046 /* CaffeineManager.swift */,
 				A2000047 /* WelcomeWindow.swift */,
+				A200005B /* ShortcutCheatSheet.swift */,
+				A200005A /* ScreenshotSessionExporter.swift */,
+				A2000059 /* ScreenshotPreviewView.swift */,
+				A2000058 /* ScreenshotPDFExporter.swift */,
+				A2000057 /* ScreenshotNotesStore.swift */,
+				A2000056 /* ScreenshotNotesLog.swift */,
+				A2000055 /* ScreenshotMarkdownExporter.swift */,
+				A2000054 /* ScreenshotImageRenderer.swift */,
+				A2000053 /* ScreenshotHistoryWindowController.swift */,
+				A2000052 /* ScreenshotHistoryView.swift */,
+				A2000051 /* ScreenshotHistoryStore.swift */,
+				A2000050 /* ScreenshotAnnotationWindowController.swift */,
+				A200004F /* ScreenshotAnnotationView.swift */,
+				A200004E /* ScreenCaptureService.swift */,
+				A200004D /* QuickNoteHUD.swift */,
+				A200004C /* QuickCaptureOverlay.swift */,
+				A200004B /* QuickCaptureController.swift */,
+				A200004A /* GlobalDictationBridge.swift */,
+				A2000049 /* DictationController.swift */,
+				A2000048 /* AgentHandoffService.swift */,
 				A2000022 /* NameExtractor.swift */,
 				A2000034 /* ScreenshotTransferService.swift */,
 				A200003D /* ClipboardHistoryStore.swift */,
@@ -173,6 +235,7 @@
 				A2000006 /* Transcription.swift */,
 				A2000018 /* FailedRequest.swift */,
 				A200003C /* ClipboardItem.swift */,
+				A200005C /* ScreenshotNote.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -297,6 +360,27 @@
 				A1000045 /* HyperKeyManager.swift in Sources */,
 				A1000046 /* CaffeineManager.swift in Sources */,
 				A1000047 /* WelcomeWindow.swift in Sources */,
+				A100005C /* ScreenshotNote.swift in Sources */,
+				A100005B /* ShortcutCheatSheet.swift in Sources */,
+				A100005A /* ScreenshotSessionExporter.swift in Sources */,
+				A1000059 /* ScreenshotPreviewView.swift in Sources */,
+				A1000058 /* ScreenshotPDFExporter.swift in Sources */,
+				A1000057 /* ScreenshotNotesStore.swift in Sources */,
+				A1000056 /* ScreenshotNotesLog.swift in Sources */,
+				A1000055 /* ScreenshotMarkdownExporter.swift in Sources */,
+				A1000054 /* ScreenshotImageRenderer.swift in Sources */,
+				A1000053 /* ScreenshotHistoryWindowController.swift in Sources */,
+				A1000052 /* ScreenshotHistoryView.swift in Sources */,
+				A1000051 /* ScreenshotHistoryStore.swift in Sources */,
+				A1000050 /* ScreenshotAnnotationWindowController.swift in Sources */,
+				A100004F /* ScreenshotAnnotationView.swift in Sources */,
+				A100004E /* ScreenCaptureService.swift in Sources */,
+				A100004D /* QuickNoteHUD.swift in Sources */,
+				A100004C /* QuickCaptureOverlay.swift in Sources */,
+				A100004B /* QuickCaptureController.swift in Sources */,
+				A100004A /* GlobalDictationBridge.swift in Sources */,
+				A1000049 /* DictationController.swift in Sources */,
+				A1000048 /* AgentHandoffService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,8 @@ struct ContentView: View {
     @EnvironmentObject var permissionManager: PermissionManager
     @EnvironmentObject var failedRequestStore: FailedRequestStore
     @StateObject private var devMachinesViewModel = DevelopmentMachinesViewModel()
+    @ObservedObject private var screenshotStore = ScreenshotNotesStore.shared
+    @ObservedObject private var screenshotHistory = ScreenshotHistoryStore.shared
     @State private var showingAllHistory = false
     @AppStorage(WakeWordDefaults.enabledKey) private var wakeWordEnabled = WakeWordDefaults.defaultEnabled
 
@@ -17,6 +19,13 @@ struct ContentView: View {
                 Text("AIHelper")
                     .font(.headline)
                 Spacer()
+
+                Button(action: { ScreenshotHistoryWindowController.shared.showWindow() }) {
+                    Image(systemName: "camera.viewfinder")
+                        .accessibilityLabel("Screenshot Notes")
+                }
+                .buttonStyle(.plain)
+                .help("Screenshot Notes: history of recent sessions (\(ShortcutConfig.annotateScreenshot.displayString) captures)")
 
                 Button(action: { SettingsWindowController.shared.showSettings() }) {
                     Image(systemName: "gear")
@@ -140,6 +149,24 @@ struct ContentView: View {
                     }
 
                     HStack(spacing: 8) {
+                        Text(ShortcutConfig.annotateScreenshot.displayString)
+                            .font(.caption2)
+                            .foregroundColor(.purple)
+                        Text("Screenshot → mark & note")
+                            .font(.caption2)
+                            .foregroundColor(.purple)
+                    }
+
+                    HStack(spacing: 8) {
+                        Text(ShortcutConfig.finishScreenshotSession.displayString)
+                            .font(.caption2)
+                            .foregroundColor(.purple)
+                        Text("Export notes → PDF in clipboard")
+                            .font(.caption2)
+                            .foregroundColor(.purple)
+                    }
+
+                    HStack(spacing: 8) {
                         Text("⌃⌥⌘⇧T")
                             .font(.caption2)
                             .foregroundColor(.green)
@@ -160,6 +187,12 @@ struct ContentView: View {
 
             // Wake word status bar
             WakeWordStatusBar(isEnabled: $wakeWordEnabled)
+
+            // Screenshot Notes: session in progress + last export
+            if ScreenshotNotesInlineView.isVisible(store: screenshotStore, history: screenshotHistory) {
+                Divider()
+                ScreenshotNotesInlineView()
+            }
 
             // Keep-awake (caffeine) bar
             CaffeineStatusBar()
@@ -255,8 +288,9 @@ struct ContentView: View {
     }
 
     private var calculatedHeight: CGFloat {
-        var height: CGFloat = showingAllHistory ? 500 : 340  // Base height increased for wake word bar
+        var height: CGFloat = showingAllHistory ? 532 : 372  // Base height incl. wake word bar and shortcut list
         height += 52  // Keep-awake (caffeine) bar
+        height += ScreenshotNotesInlineView.height(store: screenshotStore, history: screenshotHistory)
 
         // Add extra height for permission warnings
         if !permissionManager.hasAccessibilityPermission {

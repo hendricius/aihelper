@@ -31,7 +31,9 @@ struct ShortcutConfig: Hashable {
 
     private func keyCodeToString(_ code: UInt16) -> String {
         switch code {
+        case 0: return "A"
         case 1: return "S"
+        case 2: return "D"
         case 14: return "E"
         case 15: return "R"
         case 17: return "T"
@@ -127,6 +129,24 @@ struct ShortcutConfig: Hashable {
         keyCode: 8,  // C
         modifiers: [.control, .option, .command, .shift],
         name: "Clipboard History"
+    )
+
+    static let annotateScreenshot = ShortcutConfig(
+        keyCode: 0,  // A
+        modifiers: [.control, .option, .command, .shift],
+        name: "Annotate Screenshot"
+    )
+
+    static let finishScreenshotSession = ShortcutConfig(
+        keyCode: 2,  // D
+        modifiers: [.control, .option, .command, .shift],
+        name: "Finish Screenshot Notes"
+    )
+
+    static let reviewScreenshotSession = ShortcutConfig(
+        keyCode: 46,  // M
+        modifiers: [.control, .option, .command, .shift],
+        name: "Review Screenshot Notes"
     )
 }
 

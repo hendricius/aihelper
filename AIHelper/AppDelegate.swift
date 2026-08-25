@@ -14,9 +14,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // An explicit user toggle is stored in the standard domain and overrides this.
         UserDefaults.standard.register(defaults: [HyperKeyManager.enabledKey: true])
 
+        ScreenshotNotesLog.installUncaughtExceptionHandler()
+
         // Check all permissions
         Task { @MainActor in
             PermissionManager.shared.checkAllPermissions()
+            // Restores an open screenshot session and drops history entries
+            // beyond the configured limit
+            ScreenshotHistoryStore.shared.refreshAndPrune()
         }
 
         // Register global shortcuts
@@ -77,6 +82,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 Task { @MainActor in
                     ClipboardHistoryWindowController.shared.toggleWindow()
                 }
+            }),
+
+            // Ctrl+Option+Cmd+Shift+A: Capture the frontmost window and annotate it
+            (.annotateScreenshot, {
+                print("Annotate screenshot hotkey triggered!")
+                Task { @MainActor in
+                    ScreenshotAnnotationWindowController.shared.captureAndAnnotate()
+                }
+            }),
+
+            // Ctrl+Option+Cmd+Shift+D: Export the session, hand-off to clipboard
+            (.finishScreenshotSession, {
+                print("Finish screenshot session hotkey triggered!")
+                Task { @MainActor in
+                    ScreenshotAnnotationWindowController.shared.reviewAndFinish()
+                }
+            }),
+
+            // Ctrl+Option+Cmd+Shift+M: Review/edit the session before exporting
+            (.reviewScreenshotSession, {
+                print("Review screenshot session hotkey triggered!")
+                Task { @MainActor in
+                    ScreenshotAnnotationWindowController.shared.openReview()
+                }
             })
         ])
 
@@ -86,6 +115,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("  - Ctrl+Option+Cmd+Shift+T: Casual Message")
         print("  - Ctrl+Option+Cmd+Shift+S: Send Screenshot to VM")
         print("  - Ctrl+Option+Cmd+Shift+C: Clipboard History")
+        print("  - Ctrl+Option+Cmd+Shift+A: Annotate Screenshot")
+        print("  - Ctrl+Option+Cmd+Shift+D: Export Screenshot Notes")
+        print("  - Ctrl+Option+Cmd+Shift+M: Review Screenshot Notes")
         print("  - Escape: Cancel Processing")
     }
 
