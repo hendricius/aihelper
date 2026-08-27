@@ -50,7 +50,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
 - 🖥️ **Development Machines** overview — every host from your `~/.ssh/config`, with one-click copy / Terminal / browser
 - 🧠 Custom vocabulary to improve spelling of names and technical terms
 - 📋 Clipboard history manager (`⌃⌥⌘⇧C`)
-- 📸 **Screenshot Notes** — grab the front window (`⌃⌥⌘⇧A`), drag boxes on the frozen image and dictate a note per box; `⌃⌥⌘⇧D` turns the whole session into a PDF on your clipboard, ready to paste into Claude, ChatGPT or an agent. Keeps a history of recent sessions so you can export one again
+- 📸 **[Screenshot Notes](#screenshot-notes)** — grab the front window (`⌃⌥⌘⇧A`), drag boxes on the frozen image and dictate a note per box; `⌃⌥⌘⇧D` turns the whole session into a PDF on your clipboard, ready to paste into Claude, ChatGPT or an agent. Keeps a history of recent sessions so you can export one again
 - ☕ **Keep Awake** — a built-in [Caffeine](https://www.caffeine-app.net/): keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, so you don't need the separate Caffeine app. The menu-bar mic fills in while it's active, like Caffeine's full cup
 - 📜 Transcription history with audio playback and full API debug logging — a growing archive of your own voice and phrasing (handy for, say, training a voice clone of yourself later)
 
@@ -95,6 +95,34 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
     <td width="50%" valign="top">
       <img src="docs/screenshots/keep-awake-menubar.png" alt="The menu-bar microphone changes from outline to filled when Keep Awake is on"><br>
       <b>Glanceable menu-bar icon</b> — the mic fills in while Keep Awake is on, like Caffeine's full cup.
+    </td>
+  </tr>
+</table>
+
+### Screenshot Notes
+
+Grab the window in front of you with `⌃⌥⌘⇧A`, drag a box around whatever needs explaining and
+type or dictate a note per box. `⌃⌥⌘⇧D` hands the whole session to an agent as a PDF.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/screenshot-notes-quick.png" alt="A frozen browser page with a marked area and a small note popup beside it"><br>
+      <b>Mark it, say what is wrong</b> — the page freezes, you drag a box, the popup takes the note. <code>↩</code> saves it and drops you back in the browser.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/screenshot-notes-editor.png" alt="The Screenshot Notes editor showing a captured page with two numbered areas and their notes"><br>
+      <b>The editor</b> (<code>⌃⌥⌘⇧M</code>) — every capture in the session, its numbered areas, the note for each, and one task for the agent.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/screenshot-notes-review.png" alt="The Review and Export tab rendering the notes file the agent receives"><br>
+      <b>See what the agent gets</b> — the review tab renders the notes file before you hand it over, as Markdown or PDF.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/screenshot-notes-history.png" alt="The Screenshot Notes History window listing recent sessions with Copy PDF buttons"><br>
+      <b>Sessions stay around</b> — copy an older session's PDF again, send it to an agent, or reopen it to add more.
     </td>
   </tr>
 </table>
