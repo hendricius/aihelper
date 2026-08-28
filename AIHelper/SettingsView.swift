@@ -43,6 +43,7 @@ struct SettingsView: View {
     @AppStorage(ScreenshotHistoryStore.keepLimitKey) private var screenshotHistoryLimit = ScreenshotHistoryStore.defaultKeepLimit
     @AppStorage(ScreenshotNotesStore.reviewBeforeExportKey) private var screenshotReviewBeforeExport = false
     @ObservedObject private var caffeine = CaffeineManager.shared
+    @ObservedObject private var permissionManager = PermissionManager.shared
 
     private var activeProvider: APIProvider {
         APIProvider(rawValue: activeProviderRaw) ?? .openAI
@@ -73,6 +74,7 @@ struct SettingsView: View {
         case developmentMachines
         case api
         case email
+        case permissions
         case about
         case developer
 
@@ -165,6 +167,13 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    settingsRow(
+                        icon: "lock.shield",
+                        title: "Permissions",
+                        subtitle: permissionManager.auditSummary,
+                        section: .permissions
+                    )
+
                     settingsRow(
                         icon: "info.circle",
                         title: "About",
@@ -422,6 +431,8 @@ struct SettingsView: View {
             apiSettings
         case .email:
             emailSettings
+        case .permissions:
+            permissionsSettings
         case .about:
             aboutView
         case .developer:
@@ -1062,6 +1073,126 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .padding()
+    }
+
+    // MARK: - Permissions
+
+    private var permissionsSettings: some View {
+        Form {
+            Section {
+                ForEach(permissionManager.checks) { check in
+                    permissionRow(check)
+                }
+            } header: {
+                HStack {
+                    Label("Permissions", systemImage: "lock.shield")
+                    Spacer()
+                    Text(permissionManager.auditSummary)
+                        .font(.caption)
+                        .foregroundColor(permissionManager.blockingChecks.isEmpty ? .secondary : .orange)
+                }
+            } footer: {
+                Text("macOS grants these per app and per copy. If you move or rebuild AIHelper, macOS can treat it as a different app and you have to grant them again — that is the usual reason a shortcut suddenly stops working.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Section {
+                HStack {
+                    Button("Re-check") { permissionManager.refreshAudit() }
+                    Button("Copy Diagnostics") {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(permissionManager.diagnosticsReport(), forType: .string)
+                    }
+                    Spacer()
+                    Button("Open Privacy & Security") {
+                        permissionManager.openSettings(for: .accessibility)
+                    }
+                }
+            } footer: {
+                Text("System Settings shows a permission as granted only after the app is restarted, so re-check after flipping a switch.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+        .onAppear { permissionManager.refreshAudit() }
+    }
+
+    @ViewBuilder
+    private func permissionRow(_ check: PermissionCheck) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: statusSymbol(for: check.state))
+                .foregroundColor(statusColor(for: check.state))
+                .font(.title3)
+                .frame(width: 22)
+                .accessibilityLabel(statusLabel(for: check.state))
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Image(systemName: check.id.symbol)
+                        .foregroundColor(.secondary)
+                    Text(check.id.title)
+                }
+                Text(check.id.purpose)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let detail = check.detail {
+                    Text(detail)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Spacer(minLength: 8)
+
+            switch check.state {
+            case .granted:
+                Text("Granted")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            case .notApplicable:
+                Text("Not needed")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            case .notDetermined where check.id.canPromptDirectly:
+                Button("Grant…") { permissionManager.request(check.id) }
+                    .controlSize(.small)
+            case .notDetermined, .denied:
+                Button("Open Settings") { permissionManager.openSettings(for: check.id) }
+                    .controlSize(.small)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func statusSymbol(for state: PermissionState) -> String {
+        switch state {
+        case .granted: return "checkmark.circle.fill"
+        case .denied: return "exclamationmark.triangle.fill"
+        case .notDetermined: return "questionmark.circle.fill"
+        case .notApplicable: return "minus.circle"
+        }
+    }
+
+    private func statusColor(for state: PermissionState) -> Color {
+        switch state {
+        case .granted: return .green
+        case .denied: return .orange
+        case .notDetermined: return .yellow
+        case .notApplicable: return .secondary
+        }
+    }
+
+    private func statusLabel(for state: PermissionState) -> String {
+        switch state {
+        case .granted: return "Granted"
+        case .denied: return "Not granted"
+        case .notDetermined: return "Not asked yet"
+        case .notApplicable: return "Not applicable"
+        }
     }
 
     // MARK: - Development Machines

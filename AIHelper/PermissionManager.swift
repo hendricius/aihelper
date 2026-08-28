@@ -1,6 +1,8 @@
 import AppKit
 import AVFoundation
 import ApplicationServices
+import CoreGraphics
+import Speech
 
 @MainActor
 class PermissionManager: ObservableObject {
@@ -92,6 +94,86 @@ class PermissionManager: ObservableObject {
     func openSystemSettings() {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
             NSWorkspace.shared.open(url)
+        }
+    }
+
+    // MARK: - Full audit (Settings → Permissions)
+
+    /// Every permission the app depends on, refreshed by `refreshAudit()`.
+    @Published var checks: [PermissionCheck] = []
+
+    /// "All 6 granted" / "4 of 6 granted", for the sidebar subtitle.
+    var auditSummary: String { PermissionAudit.summary(for: checks) }
+
+    /// Permissions that are missing and actually block a feature.
+    var blockingChecks: [PermissionCheck] { checks.filter { $0.state.isBlocking } }
+
+    /// Re-reads every permission. Preflight only — this never shows a system prompt, so it
+    /// is safe to call whenever the page appears or the app comes back to the front.
+    func refreshAudit() {
+        checks = PermissionAudit.checkAll()
+        // Keep the two long-standing flags in step for the rest of the app.
+        hasAccessibilityPermission = checks.first { $0.id == .accessibility }?.state == .granted
+        hasMicrophonePermission = checks.first { $0.id == .microphone }?.state == .granted
+    }
+
+    /// Asks macOS for the permission where an API exists for it, then refreshes. Once a
+    /// permission has been refused the system prompt no longer appears, so for anything
+    /// already denied this opens System Settings instead.
+    func request(_ kind: PermissionCheck.Kind) {
+        let current = checks.first { $0.id == kind }?.state ?? PermissionAudit.check(kind).state
+        guard kind.canPromptDirectly, current == .notDetermined else {
+            openSettings(for: kind)
+            return
+        }
+
+        switch kind {
+        case .microphone:
+            AVCaptureDevice.requestAccess(for: .audio) { [weak self] _ in
+                Task { @MainActor in self?.refreshAudit() }
+            }
+        case .accessibility:
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
+            _ = AXIsProcessTrustedWithOptions(options as CFDictionary)
+            scheduleRefresh()
+        case .inputMonitoring:
+            _ = CGRequestListenEventAccess()
+            scheduleRefresh()
+        case .speechRecognition:
+            SFSpeechRecognizer.requestAuthorization { [weak self] _ in
+                Task { @MainActor in self?.refreshAudit() }
+            }
+        case .screenRecording:
+            _ = CGRequestScreenCaptureAccess()
+            scheduleRefresh()
+        case .automation:
+            openSettings(for: kind)
+        }
+    }
+
+    /// Opens the System Settings pane that grants `kind`.
+    func openSettings(for kind: PermissionCheck.Kind) {
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(kind.settingsPane)") else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    /// A plain-text report of the current state, for pasting into a bug report.
+    func diagnosticsReport() -> String {
+        let info = Bundle.main.infoDictionary
+        return PermissionAudit.diagnosticsReport(
+            for: checks,
+            appVersion: info?["CFBundleShortVersionString"] as? String ?? "?",
+            build: info?["CFBundleVersion"] as? String ?? "?"
+        )
+    }
+
+    /// System prompts resolve asynchronously and the preflight APIs lag slightly behind them.
+    private func scheduleRefresh() {
+        Task { @MainActor [weak self] in
+            for delay in [0.6, 1.5, 3.0] {
+                try? await Task.sleep(for: .seconds(delay))
+                self?.refreshAudit()
+            }
         }
     }
 }
