@@ -1,4 +1,4 @@
-.PHONY: build open clean clean-all load-env install uninstall release
+.PHONY: build test test-soak open clean clean-all load-env install uninstall release
 
 release:
 	@bash scripts/release.sh AIHelper.zip
@@ -19,6 +19,16 @@ load-env:
 
 build: load-env
 	xcodebuild -project AIHelper.xcodeproj -scheme AIHelper -configuration Debug build
+
+test:
+	xcodebuild test -project AIHelper.xcodeproj -scheme AIHelper -destination 'platform=macOS' -quiet
+
+# Keep Awake end-to-end check: sits through the real display-sleep timeout and verifies
+# the display stayed on. Takes minutes — do not touch the keyboard or mouse while it runs,
+# any input resets the idle timer and the result means nothing.
+test-soak:
+	AIHELPER_DISPLAY_SLEEP_SOAK=1 xcodebuild test -project AIHelper.xcodeproj -scheme AIHelper \
+		-destination 'platform=macOS' -only-testing:AIHelperTests/CaffeineManagerTests
 
 open: load-env
 	open "$$(xcodebuild -project AIHelper.xcodeproj -scheme AIHelper -configuration Debug -showBuildSettings 2>/dev/null | grep -m1 'BUILT_PRODUCTS_DIR' | awk '{print $$3}')/AIHelper.app"

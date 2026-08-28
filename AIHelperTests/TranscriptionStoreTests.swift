@@ -5,15 +5,33 @@ final class TranscriptionStoreTests: XCTestCase {
 
     var store: TranscriptionStore!
 
+    /// Throwaway storage. These tests call `clearAll()`, which deletes every transcription
+    /// and every audio file, so they must never be pointed at the real archive — running
+    /// the suite once against `UserDefaults.standard` wipes the user's history for good.
+    private var suiteName: String!
+    private var defaults: UserDefaults!
+    private var audioDirectory: URL!
+
     override func setUp() {
         super.setUp()
-        store = TranscriptionStore()
+        suiteName = "com.aihelper.app.tests.transcriptions.\(UUID().uuidString)"
+        defaults = UserDefaults(suiteName: suiteName)
+        audioDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("aihelper-tests-audio-\(UUID().uuidString)", isDirectory: true)
+        try? FileManager.default.createDirectory(at: audioDirectory, withIntermediateDirectories: true)
+        AudioFileManager.directoryOverride = audioDirectory
+
+        store = TranscriptionStore(defaults: defaults, storageKey: "transcriptions")
         store.clearAll()
     }
 
     override func tearDown() {
         store.clearAll()
         store = nil
+        AudioFileManager.directoryOverride = nil
+        try? FileManager.default.removeItem(at: audioDirectory)
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults = nil
         super.tearDown()
     }
 

@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		007BCA862380CDB575E3BF89 /* KeyboardShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FDEB5A6908047852B83F2D5 /* KeyboardShortcutTests.swift */; };
+		0B3A5BD646822AF2AA4C71E7 /* FormattingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678066F0645ECFC031B13219 /* FormattingServiceTests.swift */; };
+		21A0E1C313E44A4A19C8C81D /* SafetyUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AE3119322D0E9C0C80C6B0 /* SafetyUtilsTests.swift */; };
+		3C748A6E34D27C88C306D9C1 /* WhisperServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B3423A69FC83216B9A53C7 /* WhisperServiceTests.swift */; };
+		44C7070CFA3DABE3CBBB093B /* FailedRequestStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7C66548BE1B6EF8AAE995B /* FailedRequestStoreTests.swift */; };
+		8A6CA02EB53BB2A4B710A791 /* TranscriptionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A536A4BE4A7652107B042EDA /* TranscriptionStoreTests.swift */; };
+		9CF6F3E88A9DEF2B7BCCFAAE /* PermissionAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2A2AA6FC61124C7A9809E5 /* PermissionAuditTests.swift */; };
+		9CFB8F4C4EA0943F8204FA91 /* PermissionAudit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E7682A18A8B2E739EB44BA /* PermissionAudit.swift */; };
+		9D6E63DAB529E22E14452AD3 /* SSHConfigParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00853AA0ACB465AF5D15951 /* SSHConfigParserTests.swift */; };
 		A1000001 /* AIHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000001 /* AIHelperApp.swift */; };
 		A1000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000002 /* ContentView.swift */; };
 		A1000003 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000003 /* AudioRecorder.swift */; };
@@ -49,30 +58,51 @@
 		A1000045 /* HyperKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000045 /* HyperKeyManager.swift */; };
 		A1000046 /* CaffeineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000046 /* CaffeineManager.swift */; };
 		A1000047 /* WelcomeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000047 /* WelcomeWindow.swift */; };
-		A100005C /* ScreenshotNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005C /* ScreenshotNote.swift */; };
-		A100005B /* ShortcutCheatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005B /* ShortcutCheatSheet.swift */; };
-		A100005A /* ScreenshotSessionExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005A /* ScreenshotSessionExporter.swift */; };
-		A1000059 /* ScreenshotPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000059 /* ScreenshotPreviewView.swift */; };
-		A1000058 /* ScreenshotPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000058 /* ScreenshotPDFExporter.swift */; };
-		A1000057 /* ScreenshotNotesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000057 /* ScreenshotNotesStore.swift */; };
-		A1000056 /* ScreenshotNotesLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000056 /* ScreenshotNotesLog.swift */; };
-		A1000055 /* ScreenshotMarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000055 /* ScreenshotMarkdownExporter.swift */; };
-		A1000054 /* ScreenshotImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000054 /* ScreenshotImageRenderer.swift */; };
-		A1000053 /* ScreenshotHistoryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000053 /* ScreenshotHistoryWindowController.swift */; };
-		A1000052 /* ScreenshotHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000052 /* ScreenshotHistoryView.swift */; };
-		A1000051 /* ScreenshotHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000051 /* ScreenshotHistoryStore.swift */; };
-		A1000050 /* ScreenshotAnnotationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000050 /* ScreenshotAnnotationWindowController.swift */; };
-		A100004F /* ScreenshotAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004F /* ScreenshotAnnotationView.swift */; };
-		A100004E /* ScreenCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004E /* ScreenCaptureService.swift */; };
-		A100004D /* QuickNoteHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004D /* QuickNoteHUD.swift */; };
-		A100004C /* QuickCaptureOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004C /* QuickCaptureOverlay.swift */; };
-		A100004B /* QuickCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004B /* QuickCaptureController.swift */; };
-		A100004A /* GlobalDictationBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004A /* GlobalDictationBridge.swift */; };
-		A1000049 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000049 /* DictationController.swift */; };
 		A1000048 /* AgentHandoffService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000048 /* AgentHandoffService.swift */; };
+		A1000049 /* DictationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000049 /* DictationController.swift */; };
+		A100004A /* GlobalDictationBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004A /* GlobalDictationBridge.swift */; };
+		A100004B /* QuickCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004B /* QuickCaptureController.swift */; };
+		A100004C /* QuickCaptureOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004C /* QuickCaptureOverlay.swift */; };
+		A100004D /* QuickNoteHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004D /* QuickNoteHUD.swift */; };
+		A100004E /* ScreenCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004E /* ScreenCaptureService.swift */; };
+		A100004F /* ScreenshotAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200004F /* ScreenshotAnnotationView.swift */; };
+		A1000050 /* ScreenshotAnnotationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000050 /* ScreenshotAnnotationWindowController.swift */; };
+		A1000051 /* ScreenshotHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000051 /* ScreenshotHistoryStore.swift */; };
+		A1000052 /* ScreenshotHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000052 /* ScreenshotHistoryView.swift */; };
+		A1000053 /* ScreenshotHistoryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000053 /* ScreenshotHistoryWindowController.swift */; };
+		A1000054 /* ScreenshotImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000054 /* ScreenshotImageRenderer.swift */; };
+		A1000055 /* ScreenshotMarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000055 /* ScreenshotMarkdownExporter.swift */; };
+		A1000056 /* ScreenshotNotesLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000056 /* ScreenshotNotesLog.swift */; };
+		A1000057 /* ScreenshotNotesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000057 /* ScreenshotNotesStore.swift */; };
+		A1000058 /* ScreenshotPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000058 /* ScreenshotPDFExporter.swift */; };
+		A1000059 /* ScreenshotPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000059 /* ScreenshotPreviewView.swift */; };
+		A100005A /* ScreenshotSessionExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005A /* ScreenshotSessionExporter.swift */; };
+		A100005B /* ShortcutCheatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005B /* ShortcutCheatSheet.swift */; };
+		A100005C /* ScreenshotNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200005C /* ScreenshotNote.swift */; };
+		DAD9DB64DA0546CFC267C455 /* AudioRecorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4329C7B0B0A57C06E45D6C36 /* AudioRecorderTests.swift */; };
+		E003D93693F9CC872F0F0FEA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3519795CBCECC9BA76A907AD /* Cocoa.framework */; };
+		F72D9EA564E519F08C46D79C /* CaffeineManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8CCBE3BBAEC160D791BABE /* CaffeineManagerTests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		17021FE93FD8130D11F5BCD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A5000001;
+			remoteInfo = AIHelper;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		2F8CCBE3BBAEC160D791BABE /* CaffeineManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CaffeineManagerTests.swift; sourceTree = "<group>"; };
+		3519795CBCECC9BA76A907AD /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		4329C7B0B0A57C06E45D6C36 /* AudioRecorderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AudioRecorderTests.swift; sourceTree = "<group>"; };
+		619CB099A743847E7EFFCB0E /* AIHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		678066F0645ECFC031B13219 /* FormattingServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FormattingServiceTests.swift; sourceTree = "<group>"; };
+		7FDEB5A6908047852B83F2D5 /* KeyboardShortcutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutTests.swift; sourceTree = "<group>"; };
+		9C7C66548BE1B6EF8AAE995B /* FailedRequestStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FailedRequestStoreTests.swift; sourceTree = "<group>"; };
+		A0B3423A69FC83216B9A53C7 /* WhisperServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WhisperServiceTests.swift; sourceTree = "<group>"; };
 		A2000001 /* AIHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIHelperApp.swift; sourceTree = "<group>"; };
 		A2000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A2000003 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
@@ -118,30 +148,43 @@
 		A2000045 /* HyperKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperKeyManager.swift; sourceTree = "<group>"; };
 		A2000046 /* CaffeineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaffeineManager.swift; sourceTree = "<group>"; };
 		A2000047 /* WelcomeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeWindow.swift; sourceTree = "<group>"; };
-		A200005C /* ScreenshotNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNote.swift; sourceTree = "<group>"; };
-		A200005B /* ShortcutCheatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutCheatSheet.swift; sourceTree = "<group>"; };
-		A200005A /* ScreenshotSessionExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSessionExporter.swift; sourceTree = "<group>"; };
-		A2000059 /* ScreenshotPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewView.swift; sourceTree = "<group>"; };
-		A2000058 /* ScreenshotPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPDFExporter.swift; sourceTree = "<group>"; };
-		A2000057 /* ScreenshotNotesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNotesStore.swift; sourceTree = "<group>"; };
-		A2000056 /* ScreenshotNotesLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNotesLog.swift; sourceTree = "<group>"; };
-		A2000055 /* ScreenshotMarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMarkdownExporter.swift; sourceTree = "<group>"; };
-		A2000054 /* ScreenshotImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotImageRenderer.swift; sourceTree = "<group>"; };
-		A2000053 /* ScreenshotHistoryWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryWindowController.swift; sourceTree = "<group>"; };
-		A2000052 /* ScreenshotHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryView.swift; sourceTree = "<group>"; };
-		A2000051 /* ScreenshotHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryStore.swift; sourceTree = "<group>"; };
-		A2000050 /* ScreenshotAnnotationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotAnnotationWindowController.swift; sourceTree = "<group>"; };
-		A200004F /* ScreenshotAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotAnnotationView.swift; sourceTree = "<group>"; };
-		A200004E /* ScreenCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureService.swift; sourceTree = "<group>"; };
-		A200004D /* QuickNoteHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteHUD.swift; sourceTree = "<group>"; };
-		A200004C /* QuickCaptureOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureOverlay.swift; sourceTree = "<group>"; };
-		A200004B /* QuickCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureController.swift; sourceTree = "<group>"; };
-		A200004A /* GlobalDictationBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalDictationBridge.swift; sourceTree = "<group>"; };
-		A2000049 /* DictationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationController.swift; sourceTree = "<group>"; };
 		A2000048 /* AgentHandoffService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentHandoffService.swift; sourceTree = "<group>"; };
+		A2000049 /* DictationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationController.swift; sourceTree = "<group>"; };
+		A200004A /* GlobalDictationBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalDictationBridge.swift; sourceTree = "<group>"; };
+		A200004B /* QuickCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureController.swift; sourceTree = "<group>"; };
+		A200004C /* QuickCaptureOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureOverlay.swift; sourceTree = "<group>"; };
+		A200004D /* QuickNoteHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNoteHUD.swift; sourceTree = "<group>"; };
+		A200004E /* ScreenCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureService.swift; sourceTree = "<group>"; };
+		A200004F /* ScreenshotAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotAnnotationView.swift; sourceTree = "<group>"; };
+		A2000050 /* ScreenshotAnnotationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotAnnotationWindowController.swift; sourceTree = "<group>"; };
+		A2000051 /* ScreenshotHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryStore.swift; sourceTree = "<group>"; };
+		A2000052 /* ScreenshotHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryView.swift; sourceTree = "<group>"; };
+		A2000053 /* ScreenshotHistoryWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotHistoryWindowController.swift; sourceTree = "<group>"; };
+		A2000054 /* ScreenshotImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotImageRenderer.swift; sourceTree = "<group>"; };
+		A2000055 /* ScreenshotMarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMarkdownExporter.swift; sourceTree = "<group>"; };
+		A2000056 /* ScreenshotNotesLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNotesLog.swift; sourceTree = "<group>"; };
+		A2000057 /* ScreenshotNotesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNotesStore.swift; sourceTree = "<group>"; };
+		A2000058 /* ScreenshotPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPDFExporter.swift; sourceTree = "<group>"; };
+		A2000059 /* ScreenshotPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewView.swift; sourceTree = "<group>"; };
+		A200005A /* ScreenshotSessionExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSessionExporter.swift; sourceTree = "<group>"; };
+		A200005B /* ShortcutCheatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutCheatSheet.swift; sourceTree = "<group>"; };
+		A200005C /* ScreenshotNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotNote.swift; sourceTree = "<group>"; };
+		A536A4BE4A7652107B042EDA /* TranscriptionStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TranscriptionStoreTests.swift; sourceTree = "<group>"; };
+		AE2A2AA6FC61124C7A9809E5 /* PermissionAuditTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PermissionAuditTests.swift; sourceTree = "<group>"; };
+		B00853AA0ACB465AF5D15951 /* SSHConfigParserTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SSHConfigParserTests.swift; sourceTree = "<group>"; };
+		D8AE3119322D0E9C0C80C6B0 /* SafetyUtilsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SafetyUtilsTests.swift; sourceTree = "<group>"; };
+		F0E7682A18A8B2E739EB44BA /* PermissionAudit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PermissionAudit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6D727A40666B08C8EA15CD92 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E003D93693F9CC872F0F0FEA /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A3000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -152,11 +195,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2654936C4FA2A5BEB5C2684E /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				3519795CBCECC9BA76A907AD /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		69AD85EBF65713FCCA518B6A /* AIHelperTests */ = {
+			isa = PBXGroup;
+			children = (
+				4329C7B0B0A57C06E45D6C36 /* AudioRecorderTests.swift */,
+				2F8CCBE3BBAEC160D791BABE /* CaffeineManagerTests.swift */,
+				9C7C66548BE1B6EF8AAE995B /* FailedRequestStoreTests.swift */,
+				678066F0645ECFC031B13219 /* FormattingServiceTests.swift */,
+				7FDEB5A6908047852B83F2D5 /* KeyboardShortcutTests.swift */,
+				B00853AA0ACB465AF5D15951 /* SSHConfigParserTests.swift */,
+				D8AE3119322D0E9C0C80C6B0 /* SafetyUtilsTests.swift */,
+				A536A4BE4A7652107B042EDA /* TranscriptionStoreTests.swift */,
+				A0B3423A69FC83216B9A53C7 /* WhisperServiceTests.swift */,
+				AE2A2AA6FC61124C7A9809E5 /* PermissionAuditTests.swift */,
+			);
+			name = AIHelperTests;
+			path = AIHelperTests;
+			sourceTree = "<group>";
+		};
 		A4000001 = {
 			isa = PBXGroup;
 			children = (
 				A4000002 /* AIHelper */,
 				A4000004 /* Products */,
+				BD0A9BCE41335F746E496929 /* Frameworks */,
+				69AD85EBF65713FCCA518B6A /* AIHelperTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -225,6 +296,7 @@
 				A2000008 /* Assets.xcassets */,
 				A2000009 /* Info.plist */,
 				A200000A /* AIHelper.entitlements */,
+				F0E7682A18A8B2E739EB44BA /* PermissionAudit.swift */,
 			);
 			path = AIHelper;
 			sourceTree = "<group>";
@@ -244,8 +316,17 @@
 			isa = PBXGroup;
 			children = (
 				A200000B /* AIHelper.app */,
+				619CB099A743847E7EFFCB0E /* AIHelperTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BD0A9BCE41335F746E496929 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2654936C4FA2A5BEB5C2684E /* OS X */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,6 +348,24 @@
 			productName = AIHelper;
 			productReference = A200000B /* AIHelper.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CC6FF25D57C88F27580FDD0A /* AIHelperTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6B290D2F71967CE6493EFBB8 /* Build configuration list for PBXNativeTarget "AIHelperTests" */;
+			buildPhases = (
+				A545F9A05690472A5F872987 /* Sources */,
+				6D727A40666B08C8EA15CD92 /* Frameworks */,
+				D48F5EFB41E9EB957D65F642 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8FFC3BA3796A44FB48E5BBE3 /* PBXTargetDependency */,
+			);
+			name = AIHelperTests;
+			productName = AIHelperTests;
+			productReference = 619CB099A743847E7EFFCB0E /* AIHelperTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -292,13 +391,12 @@
 				Base,
 			);
 			mainGroup = A4000001;
-			packageReferences = (
-			);
 			productRefGroup = A4000004 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				A5000001 /* AIHelper */,
+				CC6FF25D57C88F27580FDD0A /* AIHelperTests */,
 			);
 		};
 /* End PBXProject section */
@@ -309,6 +407,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000008 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D48F5EFB41E9EB957D65F642 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,12 +486,55 @@
 				A100004A /* GlobalDictationBridge.swift in Sources */,
 				A1000049 /* DictationController.swift in Sources */,
 				A1000048 /* AgentHandoffService.swift in Sources */,
+				9CFB8F4C4EA0943F8204FA91 /* PermissionAudit.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A545F9A05690472A5F872987 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAD9DB64DA0546CFC267C455 /* AudioRecorderTests.swift in Sources */,
+				F72D9EA564E519F08C46D79C /* CaffeineManagerTests.swift in Sources */,
+				44C7070CFA3DABE3CBBB093B /* FailedRequestStoreTests.swift in Sources */,
+				0B3A5BD646822AF2AA4C71E7 /* FormattingServiceTests.swift in Sources */,
+				007BCA862380CDB575E3BF89 /* KeyboardShortcutTests.swift in Sources */,
+				9D6E63DAB529E22E14452AD3 /* SSHConfigParserTests.swift in Sources */,
+				21A0E1C313E44A4A19C8C81D /* SafetyUtilsTests.swift in Sources */,
+				8A6CA02EB53BB2A4B710A791 /* TranscriptionStoreTests.swift in Sources */,
+				3C748A6E34D27C88C306D9C1 /* WhisperServiceTests.swift in Sources */,
+				9CF6F3E88A9DEF2B7BCCFAAE /* PermissionAuditTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		8FFC3BA3796A44FB48E5BBE3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AIHelper;
+			target = A5000001 /* AIHelper */;
+			targetProxy = 17021FE93FD8130D11F5BCD9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		9687873F2E92665114CE0A6F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aihelper.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIHelper.app/Contents/MacOS/AIHelper";
+			};
+			name = Release;
+		};
 		A8000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -559,9 +707,34 @@
 			};
 			name = Release;
 		};
+		C4FD0E7FF3E6E62FC228B047 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aihelper.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIHelper.app/Contents/MacOS/AIHelper";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6B290D2F71967CE6493EFBB8 /* Build configuration list for PBXNativeTarget "AIHelperTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9687873F2E92665114CE0A6F /* Release */,
+				C4FD0E7FF3E6E62FC228B047 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A6000001 /* Build configuration list for PBXProject "AIHelper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -581,7 +754,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = A7000001 /* Project object */;
 }

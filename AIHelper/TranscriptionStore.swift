@@ -6,10 +6,17 @@ private let logger = Logger(subsystem: "com.aihelper.app", category: "Transcript
 class TranscriptionStore: ObservableObject {
     @Published var transcriptions: [Transcription] = []
 
-    private let storageKey = "transcriptions"
     private let maxStoredTranscriptions = 100
 
-    init() {
+    /// Where the archive lives. Injectable so tests can never reach the real one:
+    /// `clearAll()` deletes every transcription *and* its audio, which is not something
+    /// a test run may do to a real user's history.
+    private let defaults: UserDefaults
+    private let storageKey: String
+
+    init(defaults: UserDefaults = .standard, storageKey: String = "transcriptions") {
+        self.defaults = defaults
+        self.storageKey = storageKey
         logger.info("Initializing TranscriptionStore...")
         load()
         logger.info("TranscriptionStore initialized with \(self.transcriptions.count) transcriptions")
@@ -57,7 +64,7 @@ class TranscriptionStore: ObservableObject {
     private func save() {
         do {
             let encoded = try JSONEncoder().encode(transcriptions)
-            UserDefaults.standard.set(encoded, forKey: storageKey)
+            defaults.set(encoded, forKey: storageKey)
             logger.debug("Saved \(self.transcriptions.count) transcriptions")
         } catch {
             logger.error("Failed to save transcriptions: \(error.localizedDescription)")
@@ -66,13 +73,13 @@ class TranscriptionStore: ObservableObject {
 
     private func load() {
         do {
-            if let data = UserDefaults.standard.data(forKey: storageKey) {
+            if let data = defaults.data(forKey: storageKey) {
                 transcriptions = try JSONDecoder().decode([Transcription].self, from: data)
                 logger.info("Loaded \(self.transcriptions.count) transcriptions from storage")
             }
         } catch {
             logger.error("Failed to decode transcriptions: \(error.localizedDescription). Clearing corrupted data.")
-            UserDefaults.standard.removeObject(forKey: storageKey)
+            defaults.removeObject(forKey: storageKey)
             transcriptions = []
         }
     }

@@ -7,7 +7,12 @@ enum AudioFileManager {
     private static let audioDirectoryName = "audio"
     private static let appSupportSubdir = "com.aihelper.app"
 
+    /// Set by tests to redirect the archive into a temporary folder. `deleteAllAudio()`
+    /// is destructive and must never be pointed at a real user's recordings.
+    static var directoryOverride: URL?
+
     static var audioDirectory: URL {
+        if let directoryOverride { return directoryOverride }
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport
             .appendingPathComponent(appSupportSubdir)
