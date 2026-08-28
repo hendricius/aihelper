@@ -30,10 +30,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Start the Caps Lock hyper key if the user enabled it
         HyperKeyManager.shared.startIfEnabled()
 
-        // Drive the menu-bar icon ourselves. MenuBarExtra on recent macOS does not re-render
-        // its label/systemImage when observed state changes, so we update the status item's
-        // image directly (the mic fills in while keep-awake is on).
-        MenuBarIconController.shared.start()
+        // Build the status item and its popover (see MenuBarController).
+        MenuBarController.shared.start()
 
         // First-launch welcome: explain the Hyper Key (which remaps Caps Lock) and walk the
         // user through granting the permissions it needs. Slight delay so the menu bar is up.
@@ -238,97 +236,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-/// Owns the menu-bar status-item image. `MenuBarExtra` renders its icon once and does not
-/// reactively update it on recent macOS, so we locate its underlying status button and set
-/// the image ourselves whenever recording / transcribing / keep-awake state changes.
-///
-/// While keep-awake is active the mic fills in (`mic` → `mic.fill`) — a glanceable "the
-/// screen won't lock" indicator, in the spirit of the classic Caffeine app's full cup.
-@MainActor
-final class MenuBarIconController {
-    static let shared = MenuBarIconController()
-
-    private var cancellables = Set<AnyCancellable>()
-    private weak var button: NSStatusBarButton?
-
-    func start() {
-        let appState = AppState.shared
-        // Re-render on any of the three state sources.
-        for publisher in [
-            CaffeineManager.shared.objectWillChange.eraseToAnyPublisher(),
-            appState.audioRecorder.objectWillChange.eraseToAnyPublisher(),
-            appState.recordingManager.objectWillChange.eraseToAnyPublisher(),
-        ] {
-            publisher
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in
-                    // objectWillChange fires before the value updates; hop once more so we
-                    // read the new state.
-                    DispatchQueue.main.async { self?.update() }
-                }
-                .store(in: &cancellables)
-        }
-        locateButton(retries: 24)
-    }
-
-    /// The status button may not exist yet at launch; retry briefly until MenuBarExtra
-    /// has created it.
-    private func locateButton(retries: Int) {
-        if let b = Self.findStatusButton() {
-            button = b
-            update()
-            return
-        }
-        guard retries > 0 else {
-            logger.error("MenuBarIconController: status button NOT found after retries; windows=\(NSApp.windows.map { String(describing: type(of: $0)) }.joined(separator: ","))")
-            return
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            self?.locateButton(retries: retries - 1)
-        }
-    }
-
-    private static func findStatusButton() -> NSStatusBarButton? {
-        for window in NSApp.windows {
-            if let b = find(in: window.contentView) { return b }
-        }
-        return nil
-    }
-
-    private static func find(in view: NSView?) -> NSStatusBarButton? {
-        guard let view else { return nil }
-        if let b = view as? NSStatusBarButton { return b }
-        for sub in view.subviews {
-            if let b = find(in: sub) { return b }
-        }
-        return nil
-    }
-
-    private func update() {
-        if button == nil { button = Self.findStatusButton() }
-        guard let button else { return }
-
-        let appState = AppState.shared
-        let symbol: String
-        if appState.recordingManager.isTranscribing {
-            symbol = "ellipsis.circle"
-        } else if appState.audioRecorder.isRecording {
-            symbol = "record.circle.fill"
-        } else if CaffeineManager.shared.isActive {
-            // Keep-awake on: fill the mic — like Caffeine's full cup — so the menu bar
-            // shows at a glance that the screen won't lock.
-            symbol = "mic.fill"
-        } else {
-            symbol = "mic"
-        }
-
-        // Template image so it renders monochrome and adapts to the menu bar (light/dark),
-        // matching every other status item.
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "AIHelper")
-        image?.isTemplate = true
-        button.image = image
-        button.contentTintColor = nil
-    }
-}
-
-private let logger = Logger(subsystem: "com.aihelper.app", category: "MenuBarIcon")

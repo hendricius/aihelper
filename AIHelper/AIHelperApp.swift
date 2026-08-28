@@ -142,35 +142,12 @@ class AppState: ObservableObject {
 struct AIHelperApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @ObservedObject private var appState = AppState.shared
-    // Observed at the App level so the Scene re-evaluates (and MenuBarExtra updates its
-    // status-item image) whenever keep-awake turns on/off.
-    @ObservedObject private var caffeine = CaffeineManager.shared
 
-    /// SF Symbol for the menu-bar item. The mic fills in while keep-awake is active — like
-    /// Caffeine's full cup — so the menu bar shows at a glance that the screen won't lock.
-    private var menuBarSymbol: String {
-        if appState.recordingManager.isTranscribing {
-            return "ellipsis.circle"
-        } else if appState.audioRecorder.isRecording {
-            return "record.circle.fill"
-        } else if caffeine.isActive {
-            return "mic.fill"
-        } else {
-            return "mic"
-        }
-    }
-
+    // The status item and its popover are built by MenuBarController from the app
+    // delegate, not by a MenuBarExtra scene: MenuBarExtra left-aligns its window to the
+    // status item rather than centring under it, and does not re-render its icon when
+    // state changes.
     var body: some Scene {
-        MenuBarExtra("AIHelper", systemImage: menuBarSymbol) {
-            ContentView()
-                .environmentObject(appState.transcriptionStore)
-                .environmentObject(appState.audioRecorder)
-                .environmentObject(appState.recordingManager)
-                .environmentObject(appState.permissionManager)
-                .environmentObject(appState.failedRequestStore)
-        }
-        .menuBarExtraStyle(.window)
-
         Settings {
             SettingsView()
                 .environmentObject(appState.transcriptionStore)

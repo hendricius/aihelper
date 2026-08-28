@@ -12,6 +12,7 @@
 		21A0E1C313E44A4A19C8C81D /* SafetyUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AE3119322D0E9C0C80C6B0 /* SafetyUtilsTests.swift */; };
 		3C748A6E34D27C88C306D9C1 /* WhisperServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B3423A69FC83216B9A53C7 /* WhisperServiceTests.swift */; };
 		44C7070CFA3DABE3CBBB093B /* FailedRequestStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7C66548BE1B6EF8AAE995B /* FailedRequestStoreTests.swift */; };
+		61622B6818EC9277E63F0D2F /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459A793088ABFEEEDEF1BAE /* MenuBarController.swift */; };
 		8A6CA02EB53BB2A4B710A791 /* TranscriptionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A536A4BE4A7652107B042EDA /* TranscriptionStoreTests.swift */; };
 		9CF6F3E88A9DEF2B7BCCFAAE /* PermissionAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2A2AA6FC61124C7A9809E5 /* PermissionAuditTests.swift */; };
 		9CFB8F4C4EA0943F8204FA91 /* PermissionAudit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E7682A18A8B2E739EB44BA /* PermissionAudit.swift */; };
@@ -101,6 +102,7 @@
 		619CB099A743847E7EFFCB0E /* AIHelperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIHelperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		678066F0645ECFC031B13219 /* FormattingServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FormattingServiceTests.swift; sourceTree = "<group>"; };
 		7FDEB5A6908047852B83F2D5 /* KeyboardShortcutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutTests.swift; sourceTree = "<group>"; };
+		8459A793088ABFEEEDEF1BAE /* MenuBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		9C7C66548BE1B6EF8AAE995B /* FailedRequestStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FailedRequestStoreTests.swift; sourceTree = "<group>"; };
 		A0B3423A69FC83216B9A53C7 /* WhisperServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WhisperServiceTests.swift; sourceTree = "<group>"; };
 		A2000001 /* AIHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIHelperApp.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 				A2000009 /* Info.plist */,
 				A200000A /* AIHelper.entitlements */,
 				F0E7682A18A8B2E739EB44BA /* PermissionAudit.swift */,
+				8459A793088ABFEEEDEF1BAE /* MenuBarController.swift */,
 			);
 			path = AIHelper;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 				A1000049 /* DictationController.swift in Sources */,
 				A1000048 /* AgentHandoffService.swift in Sources */,
 				9CFB8F4C4EA0943F8204FA91 /* PermissionAudit.swift in Sources */,
+				61622B6818EC9277E63F0D2F /* MenuBarController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
