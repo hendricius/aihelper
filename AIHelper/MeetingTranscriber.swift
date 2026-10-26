@@ -278,6 +278,13 @@ enum MeetingPlanner {
         return MeetingTurns.numberingSpeakers(spans)
     }
 
+    /// A single voice on the microphone is whoever is recording — "Me", not "Speaker 1". That
+    /// is also what a call looks like when nobody else has spoken yet.
+    private static func soleVoiceIsMe(_ spans: [SpeakerSpan]) -> [SpeakerSpan] {
+        guard Set(spans.map(\.speaker)).count == 1 else { return spans }
+        return spans.map { SpeakerSpan(speaker: MeetingSpeaker.me, start: $0.start, end: $0.end) }
+    }
+
     static func isCall(systemSpeech: [ClosedRange<TimeInterval>]) -> Bool {
         systemSpeech.reduce(0) { $0 + ($1.upperBound - $1.lowerBound) } >= minimumCallSpeech
     }
@@ -291,7 +298,7 @@ enum MeetingPlanner {
         microphoneSpeakers: [SpeakerSpan]? = nil,
         systemSpeakers: [SpeakerSpan]? = nil
     ) -> [MeetingSegment] {
-        let microphone = microphoneSpeakers
+        let microphone = microphoneSpeakers.map(soleVoiceIsMe)
             ?? microphoneSpeech.map { SpeakerSpan(speaker: MeetingSpeaker.me, start: $0.lowerBound, end: $0.upperBound) }
         let system = systemSpeakers
             ?? systemSpeech.map { SpeakerSpan(speaker: MeetingSpeaker.them, start: $0.lowerBound, end: $0.upperBound) }

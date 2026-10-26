@@ -60,22 +60,32 @@ struct MeetingsView: View {
     @AppStorage(MeetingStore.keepAudioKey) private var keepAudio = false
     @AppStorage(FluidAudioDiarizer.enabledKey) private var separateSpeakers = true
 
+    // An HSplitView rather than a NavigationSplitView: hosted in a plain NSHostingView (as all
+    // of the app's own windows are), a NavigationSplitView draws its columns but none of
+    // their content.
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selection.meetingID) {
-                ForEach(store.meetings) { meeting in
-                    MeetingRow(meeting: meeting)
-                        .tag(meeting.id)
+        HSplitView {
+            VStack(spacing: 0) {
+                List(selection: $selection.meetingID) {
+                    ForEach(store.meetings) { meeting in
+                        MeetingRow(meeting: meeting)
+                            .tag(meeting.id)
+                    }
+                }
+                .listStyle(.sidebar)
+                Divider()
+                sidebarFooter
+            }
+            .frame(minWidth: 230, idealWidth: 260, maxWidth: 340)
+
+            Group {
+                if let id = selection.meetingID, let meeting = store.meeting(id: id) {
+                    MeetingDetailView(meeting: meeting)
+                } else {
+                    emptyState
                 }
             }
-            .navigationSplitViewColumnWidth(min: 230, ideal: 260, max: 340)
-            .safeAreaInset(edge: .bottom) { sidebarFooter }
-        } detail: {
-            if let id = selection.meetingID, let meeting = store.meeting(id: id) {
-                MeetingDetailView(meeting: meeting)
-            } else {
-                emptyState
-            }
+            .frame(minWidth: 460, maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(minWidth: 720, minHeight: 420)
     }
@@ -105,7 +115,6 @@ struct MeetingsView: View {
                 .help("Off: the recording is deleted once every part is transcribed, only the transcript stays.")
         }
         .padding(12)
-        .background(.bar)
     }
 
     private var emptyState: some View {

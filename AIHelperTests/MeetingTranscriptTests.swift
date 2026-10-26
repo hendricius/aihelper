@@ -85,6 +85,19 @@ final class MeetingTranscriptTests: XCTestCase {
         XCTAssertEqual(segments.map(\.speaker), [MeetingSpeaker.me, "speaker-1", "speaker-2"])
     }
 
+    func testASingleVoiceOnTheMicrophoneIsMe() {
+        let segments = MeetingPlanner.segments(
+            microphoneSpeech: [0...3, 5...8],
+            systemSpeech: [],
+            microphoneSpeakers: [
+                SpeakerSpan(speaker: "speaker-1", start: 0, end: 3),
+                SpeakerSpan(speaker: "speaker-1", start: 5, end: 8),
+            ]
+        )
+
+        XCTAssertEqual(segments.map(\.speaker), [MeetingSpeaker.me, MeetingSpeaker.me])
+    }
+
     func testABriefSoundOnTheSystemTrackIsNotACall() {
         XCTAssertFalse(MeetingPlanner.isCall(systemSpeech: [0...1.5]))
         XCTAssertTrue(MeetingPlanner.isCall(systemSpeech: [0...2, 5...7]))
