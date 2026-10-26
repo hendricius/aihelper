@@ -88,6 +88,8 @@ final class MenuBarController {
             CaffeineManager.shared.objectWillChange.eraseToAnyPublisher(),
             appState.audioRecorder.objectWillChange.eraseToAnyPublisher(),
             appState.recordingManager.objectWillChange.eraseToAnyPublisher(),
+            MeetingRecorder.shared.objectWillChange.eraseToAnyPublisher(),
+            MeetingTranscriber.shared.objectWillChange.eraseToAnyPublisher(),
         ] {
             publisher
                 .receive(on: DispatchQueue.main)
@@ -101,7 +103,8 @@ final class MenuBarController {
     }
 
     /// While keep-awake is active the mic fills in (`mic` → `mic.fill`) — a glanceable
-    /// "the screen won't lock" indicator, in the spirit of Caffeine's full cup.
+    /// "the screen won't lock" indicator, in the spirit of Caffeine's full cup. A meeting
+    /// being recorded shows people talking, so it is never mistaken for a dictation.
     private func updateIcon() {
         guard let button = statusItem?.button else { return }
 
@@ -111,6 +114,10 @@ final class MenuBarController {
             symbol = "ellipsis.circle"
         } else if appState.audioRecorder.isRecording {
             symbol = "record.circle.fill"
+        } else if MeetingRecorder.shared.isRecording {
+            symbol = "person.2.wave.2.fill"
+        } else if MeetingTranscriber.shared.activeMeetingID != nil {
+            symbol = "ellipsis.circle"
         } else if CaffeineManager.shared.isActive {
             symbol = "mic.fill"
         } else {

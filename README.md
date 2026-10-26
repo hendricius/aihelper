@@ -32,6 +32,7 @@ you just press:
 - **Caps Lock + E** — reformat your dictation into an email reply
 - **Caps Lock + T** — reformat into a casual message to a friend
 - **Caps Lock + C** — open clipboard history
+- **Caps Lock + N** — start / stop recording a meeting
 
 This replaces the separate [Hyperkey](https://hyperkey.app) app — no extra tool needed. While the
 Hyper Key is on, Caps Lock no longer toggles caps (hold Shift to type capitals), and normal Caps
@@ -47,6 +48,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
 - 💬 **Informal mode** — turn dictation into a casual message to a friend (`⌃⌥⌘⇧T`)
 - 🛑 **Stop word**: say a word like *"over"* and recording stops automatically, then the text is inserted right at your cursor
 - 🗣️ Hands-free recording: start with a wake word too (speech recognition runs locally)
+- 👥 **[Meeting transcription](#meeting-transcription)** (`⌃⌥⌘⇧N`) — records your microphone and whatever your Mac plays, so it works in Zoom, Meet, Teams, Slack or FaceTime without a bot joining the call; stop it and you get a transcript that says who said what
 - 🖥️ **Development Machines** overview — every host from your `~/.ssh/config`, with one-click copy / Terminal / browser
 - 🧠 Custom vocabulary to improve spelling of names and technical terms
 - 📋 Clipboard history manager (`⌃⌥⌘⇧C`)
@@ -127,6 +129,23 @@ type or dictate a note per box. `⌃⌥⌘⇧D` hands the whole session to an ag
   </tr>
 </table>
 
+### Meeting transcription
+
+Press `⌃⌥⌘⇧N` (Caps Lock + N) when a call starts and again when it ends — or use **Record** in the
+menu-bar popover. Nothing joins the call: AIHelper records two tracks, your microphone and the audio
+your Mac plays, so every call app works the same, as do videos and in-person meetings.
+
+When you stop, AIHelper finds the speech in each track, sends each turn to your transcription
+provider (AI Coordinator when it has a key, otherwise the active provider) and puts the parts back
+together in order. Your microphone is labelled *Me* and the call *Them*; rename a speaker once and the
+whole transcript follows. If the microphone also picked up the call through your speakers, those
+duplicate lines are dropped. Transcripts live in **Meetings** (from the popover), one folder each
+under `~/Library/Application Support/AIHelper/Meetings` with a `transcript.md` you can hand to an
+agent. The audio is deleted once every part is transcribed, unless you choose to keep it.
+
+Tell people when you record them: in many countries, Germany included, recording a conversation
+without consent is against the law.
+
 ## Requirements
 
 - macOS 14.0 (Sonoma) or later
@@ -198,6 +217,7 @@ transfer. Nothing is sent anywhere; it just reads your local SSH config.
 - **Input Monitoring** — required for the built-in Hyper Key (Caps Lock → ⌃⌥⌘⇧)
 - **Speech Recognition** — required for the wake-word / stop-word hands-free mode (runs locally)
 - **Screen Recording** — required for Screenshot Notes (System Settings → Privacy & Security → Screen Recording)
+- **System Audio Recording** — required for meeting transcription to hear the other people on the call; macOS asks on your first meeting (System Settings → Privacy & Security → Screen & System Audio Recording). Needs macOS 14.2 or later; on older systems only your microphone is recorded
 
 ## Project structure
 

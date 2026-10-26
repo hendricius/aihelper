@@ -197,6 +197,9 @@ struct ContentView: View {
             // Keep-awake (caffeine) bar
             CaffeineStatusBar()
 
+            // Meeting recording and transcription
+            MeetingStatusBar()
+
             // Error message
             if let error = recordingManager.errorMessage {
                 Text(error)
@@ -290,6 +293,7 @@ struct ContentView: View {
     private var calculatedHeight: CGFloat {
         var height: CGFloat = showingAllHistory ? 532 : 372  // Base height incl. wake word bar and shortcut list
         height += 52  // Keep-awake (caffeine) bar
+        height += 52  // Meeting bar
         height += ScreenshotNotesInlineView.height(store: screenshotStore, history: screenshotHistory)
 
         // Add extra height for permission warnings

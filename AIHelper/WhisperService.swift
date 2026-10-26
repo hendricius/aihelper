@@ -27,11 +27,11 @@ actor WhisperService {
     /// - Parameters:
     ///   - audioURL: URL to the audio file
     ///   - promptHint: Optional text with names/terminology to guide transcription spelling
+    ///   - provider: Backend to use; dictation follows the provider picked in Settings
     ///   - onProgress: Optional callback for upload progress (0.0 to 1.0)
-    func transcribe(audioURL: URL, promptHint: String? = nil, onProgress: ProgressHandler? = nil) async throws -> (text: String, apiLog: APICallLog) {
+    func transcribe(audioURL: URL, promptHint: String? = nil, provider: APIProvider = .active, onProgress: ProgressHandler? = nil) async throws -> (text: String, apiLog: APICallLog) {
         logger.info("Starting transcription for: \(audioURL.lastPathComponent)")
 
-        let provider = APIProvider.active
         guard let apiKey = provider.apiKey, !apiKey.isEmpty else {
             logger.error("API key not configured")
             throw WhisperError.missingAPIKey

@@ -24,6 +24,8 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>AIHelper needs microphone access to record audio for transcription.</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>AIHelper records the audio your Mac plays during a meeting, so it can transcribe what the other people on the call say.</string>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>AIHelper needs to send copy commands to capture selected text for email context.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

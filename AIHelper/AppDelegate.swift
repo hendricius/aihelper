@@ -9,6 +9,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var lastHotkeyTime: Date = .distantPast
     private let hotkeyDebounceInterval: TimeInterval = 0.3
 
+    /// The unit tests run inside the app. The test copy must not take Caps Lock, the global
+    /// shortcuts or the menu bar from the AIHelper you are running, nor reset Caps Lock when it
+    /// quits, nor send real meetings off for transcription.
+    static let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Hyper key (Caps Lock → ⌃⌥⌘⇧) is ON by default for new installs.
         // An explicit user toggle is stored in the standard domain and overrides this.
@@ -16,12 +21,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         ScreenshotNotesLog.installUncaughtExceptionHandler()
 
+        guard !Self.isRunningTests else { return }
+
         // Check all permissions
         Task { @MainActor in
             PermissionManager.shared.checkAllPermissions()
             // Restores an open screenshot session and drops history entries
             // beyond the configured limit
             ScreenshotHistoryStore.shared.refreshAndPrune()
+            // Transcribes meetings the app quit in the middle of
+            MeetingTranscriber.shared.resumeUnfinished()
         }
 
         // Register global shortcuts
@@ -104,6 +113,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 Task { @MainActor in
                     ScreenshotAnnotationWindowController.shared.openReview()
                 }
+            }),
+
+            // Ctrl+Option+Cmd+Shift+N: Start/stop recording a meeting
+            (.meetingRecording, {
+                print("Meeting recording hotkey triggered!")
+                Task { @MainActor in
+                    MeetingRecorder.shared.toggle()
+                }
             })
         ])
 
@@ -116,6 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("  - Ctrl+Option+Cmd+Shift+A: Annotate Screenshot")
         print("  - Ctrl+Option+Cmd+Shift+D: Export Screenshot Notes")
         print("  - Ctrl+Option+Cmd+Shift+M: Review Screenshot Notes")
+        print("  - Ctrl+Option+Cmd+Shift+N: Record Meeting")
         print("  - Escape: Cancel Processing")
     }
 
@@ -230,6 +248,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // So the onboarding window closing on quit (e.g. the Input Monitoring "Quit & Reopen")
         // resumes next launch instead of being marked as dismissed.
         WelcomeWindowController.appIsTerminating = true
+        guard !Self.isRunningTests else { return }
+        // Close the audio files of a meeting in progress; it is transcribed on the next launch.
+        MainActor.assumeIsolated {
+            MeetingRecorder.shared.stopForTermination()
+        }
         GlobalKeyboardShortcut.shared.unregister()
         // Restore normal Caps Lock so it isn't left remapped after we quit.
         HyperKeyManager.shared.resetMapping()

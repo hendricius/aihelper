@@ -47,6 +47,7 @@ struct ShortcutConfig: Hashable {
         case 21: return "4"
         case 23: return "5"
         case 8: return "C"
+        case 45: return "N"
         case 53: return "Esc"
         default: return "?"
         }
@@ -147,6 +148,12 @@ struct ShortcutConfig: Hashable {
         keyCode: 46,  // M
         modifiers: [.control, .option, .command, .shift],
         name: "Review Screenshot Notes"
+    )
+
+    static let meetingRecording = ShortcutConfig(
+        keyCode: 45,  // N
+        modifiers: [.control, .option, .command, .shift],
+        name: "Record Meeting"
     )
 }
 

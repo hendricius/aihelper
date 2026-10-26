@@ -20,6 +20,7 @@ struct ShortcutCheatSheet: View {
         Entry(keys: ShortcutConfig.finishScreenshotSession.displayString, action: "Export right away (PDF → clipboard; notes.md + ZIP on disk)"),
         Entry(keys: ShortcutConfig.reviewScreenshotSession.displayString, action: "Review/edit everything first, ↩ there exports"),
         Entry(keys: ShortcutConfig.recording.displayString, action: "Dictate into the focused text box"),
+        Entry(keys: ShortcutConfig.meetingRecording.displayString, action: "Record a meeting; stop it to get the transcript"),
     ])
 
     static let overlay = Group(title: "On the frozen screenshot", entries: [
