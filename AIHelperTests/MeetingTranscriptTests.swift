@@ -137,6 +137,18 @@ final class MeetingTranscriptTests: XCTestCase {
         XCTAssertEqual(MeetingTranscript.text(for: renamed), "[01:05] Hendrik: Hello.\n\n[01:10] Speaker 2: Hi!")
     }
 
+    func testOneVoiceSplitInTwoReadsAsOneOnceRenamedAlike() {
+        var split = meeting([
+            segment(.system, MeetingSpeaker.numbered(1), 0, 3, "We should ship on Friday."),
+            segment(.system, MeetingSpeaker.numbered(2), 3.5, 6, "Marketing is ready."),
+        ])
+        XCTAssertEqual(MeetingTranscript.paragraphs(for: split).count, 2)
+
+        split.speakerNames = [MeetingSpeaker.numbered(1): "Priya", MeetingSpeaker.numbered(2): "Priya"]
+
+        XCTAssertEqual(MeetingTranscript.text(for: split), "[00:00] Priya: We should ship on Friday. Marketing is ready.")
+    }
+
     func testMarkdownHasTitleLengthAndSpeakers() {
         let markdown = MeetingTranscript.markdown(for: meeting([
             segment(.microphone, MeetingSpeaker.me, 0, 2, "Hi."),

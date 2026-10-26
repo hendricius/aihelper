@@ -95,6 +95,10 @@
 		B0F42CD4EE574C48BC136567 /* MeetingTranscriptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B70A5CFEAF54CD6BDFD7E84 /* MeetingTranscriptTests.swift */; };
 		45BBF94E946649A38FEA1030 /* MeetingAudioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1955B22A8D8944B3A7B403D0 /* MeetingAudioTests.swift */; };
 		D08FEA31B27B4CA6B4E84089 /* MeetingStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CEB45E7A1F44649F78411F /* MeetingStoreTests.swift */; };
+		4C3A7FC845B942BD809140DD /* FluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 3F1A6648A6EB48A889BE222C /* FluidAudio */; };
+		84ECDF865E514F2D9B674600 /* SpeakerDiarization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32747B1AFA4E4DBE98D71D0E /* SpeakerDiarization.swift */; };
+		5845B0874375416A85FBF412 /* MeetingPlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29060FF82C624361A00E4647 /* MeetingPlannerTests.swift */; };
+		CC3473055B804515A9C9FF3A /* SpeakerDiarizationSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BD74162C6F746E289C88911 /* SpeakerDiarizationSmokeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -200,6 +204,9 @@
 		3B70A5CFEAF54CD6BDFD7E84 /* MeetingTranscriptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingTranscriptTests.swift; sourceTree = "<group>"; };
 		1955B22A8D8944B3A7B403D0 /* MeetingAudioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingAudioTests.swift; sourceTree = "<group>"; };
 		C7CEB45E7A1F44649F78411F /* MeetingStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingStoreTests.swift; sourceTree = "<group>"; };
+		32747B1AFA4E4DBE98D71D0E /* SpeakerDiarization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerDiarization.swift; sourceTree = "<group>"; };
+		29060FF82C624361A00E4647 /* MeetingPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingPlannerTests.swift; sourceTree = "<group>"; };
+		9BD74162C6F746E289C88911 /* SpeakerDiarizationSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerDiarizationSmokeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +222,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3A7FC845B942BD809140DD /* FluidAudio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +254,8 @@
 				3B70A5CFEAF54CD6BDFD7E84 /* MeetingTranscriptTests.swift */,
 				1955B22A8D8944B3A7B403D0 /* MeetingAudioTests.swift */,
 				C7CEB45E7A1F44649F78411F /* MeetingStoreTests.swift */,
+				29060FF82C624361A00E4647 /* MeetingPlannerTests.swift */,
+				9BD74162C6F746E289C88911 /* SpeakerDiarizationSmokeTests.swift */,
 			);
 			name = AIHelperTests;
 			path = AIHelperTests;
@@ -335,6 +345,7 @@
 				87C4D6D114964E9081523641 /* MeetingRecorder.swift */,
 				759F2B949E0743BD90DA62EB /* MeetingTranscriber.swift */,
 				E5FC225C794D4437BD3EC7CD /* MeetingsView.swift */,
+				32747B1AFA4E4DBE98D71D0E /* SpeakerDiarization.swift */,
 			);
 			path = AIHelper;
 			sourceTree = "<group>";
@@ -382,6 +393,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			packageProductDependencies = (
+				3F1A6648A6EB48A889BE222C /* FluidAudio */,
 			);
 			name = AIHelper;
 			productName = AIHelper;
@@ -431,6 +445,9 @@
 			);
 			mainGroup = A4000001;
 			productRefGroup = A4000004 /* Products */;
+			packageReferences = (
+				0F5E917EEE1C446EA7C7D5AE /* XCRemoteSwiftPackageReference "FluidAudio" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -535,6 +552,7 @@
 				029F0A0122A7497AB6D6A393 /* MeetingRecorder.swift in Sources */,
 				B20B4D982AF5499FA289957C /* MeetingTranscriber.swift in Sources */,
 				1581D2EF47BC4256BFCBA72A /* MeetingsView.swift in Sources */,
+				84ECDF865E514F2D9B674600 /* SpeakerDiarization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +574,8 @@
 				B0F42CD4EE574C48BC136567 /* MeetingTranscriptTests.swift in Sources */,
 				45BBF94E946649A38FEA1030 /* MeetingAudioTests.swift in Sources */,
 				D08FEA31B27B4CA6B4E84089 /* MeetingStoreTests.swift in Sources */,
+				5845B0874375416A85FBF412 /* MeetingPlannerTests.swift in Sources */,
+				CC3473055B804515A9C9FF3A /* SpeakerDiarizationSmokeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -806,6 +826,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0F5E917EEE1C446EA7C7D5AE /* XCRemoteSwiftPackageReference "FluidAudio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FluidInference/FluidAudio.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.17.7;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3F1A6648A6EB48A889BE222C /* FluidAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0F5E917EEE1C446EA7C7D5AE /* XCRemoteSwiftPackageReference "FluidAudio" */;
+			productName = FluidAudio;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A7000001 /* Project object */;
 }

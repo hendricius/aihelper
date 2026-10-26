@@ -204,13 +204,17 @@ enum MeetingTranscript {
     }
 
     /// Transcribed segments in time order, with consecutive parts by the same speaker joined.
+    /// Speakers are compared by name, so when the diarizer split one person into two voices
+    /// and the user gives both the same name, their lines run together again.
     static func paragraphs(for meeting: Meeting) -> [Paragraph] {
         var paragraphs: [Paragraph] = []
         var lastEnd: TimeInterval = -.infinity
         for segment in meeting.segments.sorted(by: { $0.start < $1.start }) {
             let text = (segment.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
             guard !text.isEmpty else { continue }
-            if let last = paragraphs.last, last.speaker == segment.speaker, segment.start - lastEnd < paragraphGap {
+            if let last = paragraphs.last,
+               meeting.name(for: last.speaker) == meeting.name(for: segment.speaker),
+               segment.start - lastEnd < paragraphGap {
                 paragraphs[paragraphs.count - 1] = Paragraph(start: last.start, speaker: last.speaker, text: last.text + " " + text)
             } else {
                 paragraphs.append(Paragraph(start: segment.start, speaker: segment.speaker, text: text))

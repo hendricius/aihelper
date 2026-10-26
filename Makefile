@@ -1,4 +1,4 @@
-.PHONY: build test test-soak open clean clean-all load-env install uninstall release
+.PHONY: build test test-soak test-diarization open clean clean-all load-env install uninstall release
 
 release:
 	@bash scripts/release.sh AIHelper.zip
@@ -29,6 +29,12 @@ test:
 test-soak:
 	AIHELPER_DISPLAY_SLEEP_SOAK=1 xcodebuild test -project AIHelper.xcodeproj -scheme AIHelper \
 		-destination 'platform=macOS' -only-testing:AIHelperTests/CaffeineManagerTests
+
+# Meeting speaker separation end-to-end: the real FluidAudio models on two synthetic voices
+# taking turns. The first run downloads the models (~21 MB) from Hugging Face.
+test-diarization:
+	TEST_RUNNER_AIHELPER_DIARIZATION_SMOKE=1 xcodebuild test -project AIHelper.xcodeproj -scheme AIHelper \
+		-destination 'platform=macOS' -only-testing:AIHelperTests/SpeakerDiarizationSmokeTests
 
 open: load-env
 	open "$$(xcodebuild -project AIHelper.xcodeproj -scheme AIHelper -configuration Debug -showBuildSettings 2>/dev/null | grep -m1 'BUILT_PRODUCTS_DIR' | awk '{print $$3}')/AIHelper.app"

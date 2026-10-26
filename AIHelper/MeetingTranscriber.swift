@@ -7,21 +7,21 @@ private let logger = Logger(subsystem: "com.aihelper.app", category: "MeetingTra
 /// is a single voice, "Them".
 protocol SpeakerDiarizer: Sendable {
     /// Speech stretches labelled by speaker. Any labels will do; they are renumbered in order
-    /// of first appearance.
-    func speakerSpans(in url: URL) async throws -> [SpeakerSpan]
+    /// of first appearance. `progress` reports 0…1 while it works, from any thread.
+    func speakerSpans(in url: URL, progress: @escaping @Sendable (Double) -> Void) async throws -> [SpeakerSpan]
 }
 
-/// Turns a recorded meeting into a transcript: finds the speech in each track, cuts it into
-/// turns, has every turn transcribed through AI Coordinator, and drops the microphone's echo
-/// of the call.
+/// Turns a recorded meeting into a transcript: finds the speech in each track, tells the
+/// speakers apart (`FluidAudioDiarizer`), cuts it into turns, has every turn transcribed
+/// through AI Coordinator, and drops the microphone's echo of the call.
 @MainActor
 final class MeetingTranscriber: ObservableObject {
     static let shared = MeetingTranscriber()
 
     /// The meeting being transcribed right now.
     @Published private(set) var activeMeetingID: UUID?
-    /// On-device speaker separation, when available.
-    var diarizer: SpeakerDiarizer?
+    /// How far telling the speakers apart has got (0…1), while it runs for a meeting.
+    @Published private(set) var speakerProgress: (meetingID: UUID, fraction: Double)?
 
     private let store: MeetingStore
     private var queue: [UUID] = []
@@ -98,10 +98,19 @@ final class MeetingTranscriber: ObservableObject {
                 fail(meetingID, "The recording is missing.")
                 return
             }
-            let diarizer = self.diarizer
+            let diarizer = FluidAudioDiarizer.current
+            speakerProgress = (meetingID, 0)
+            defer { speakerProgress = nil }
+            let progress: @Sendable (Double) -> Void = { fraction in
+                Task { @MainActor [weak self] in
+                    // Ignore updates that arrive after planning finished.
+                    guard let self, self.speakerProgress?.meetingID == meetingID else { return }
+                    self.speakerProgress = (meetingID, fraction)
+                }
+            }
             do {
                 let segments = try await Task.detached(priority: .userInitiated) {
-                    try await MeetingPlanner.plan(microphone: microphoneURL, system: systemURL, diarizer: diarizer)
+                    try await MeetingPlanner.plan(microphone: microphoneURL, system: systemURL, diarizer: diarizer, progress: progress)
                 }.value
                 guard var planned = store.meeting(id: meetingID) else { return }
                 planned.segments = segments
@@ -214,7 +223,12 @@ enum MeetingPlanner {
     /// is on the microphone.
     static let minimumCallSpeech: TimeInterval = 3
 
-    static func plan(microphone: URL, system: URL, diarizer: SpeakerDiarizer?) async throws -> [MeetingSegment] {
+    static func plan(
+        microphone: URL,
+        system: URL,
+        diarizer: SpeakerDiarizer?,
+        progress: @escaping @Sendable (Double) -> Void = { _ in }
+    ) async throws -> [MeetingSegment] {
         let segmenter = SpeechSegmenter()
         let fm = FileManager.default
         let microphoneSpeech = fm.fileExists(atPath: microphone.path)
@@ -225,14 +239,16 @@ enum MeetingPlanner {
             : []
         let call = isCall(systemSpeech: systemSpeech)
 
+        // On a call the microphone is you, and the system track gets split into the other
+        // people; in person everyone is on the microphone, so that is the track to split.
         var microphoneSpeakers: [SpeakerSpan]?
         var systemSpeakers: [SpeakerSpan]?
         if let diarizer {
             do {
                 if call {
-                    systemSpeakers = MeetingTurns.numberingSpeakers(try await diarizer.speakerSpans(in: system))
+                    systemSpeakers = try await speakers(in: system, diarizer: diarizer, progress: progress)
                 } else if !microphoneSpeech.isEmpty {
-                    microphoneSpeakers = MeetingTurns.numberingSpeakers(try await diarizer.speakerSpans(in: microphone))
+                    microphoneSpeakers = try await speakers(in: microphone, diarizer: diarizer, progress: progress)
                 }
             } catch {
                 logger.error("Speaker separation failed, falling back to Me/Them: \(error.localizedDescription, privacy: .public)")
@@ -245,6 +261,21 @@ enum MeetingPlanner {
             microphoneSpeakers: microphoneSpeakers,
             systemSpeakers: systemSpeakers
         )
+    }
+
+    /// A diarizer that found nobody in a track with speech in it has failed as surely as one
+    /// that threw; either way the plain speech ranges are used instead.
+    private static func speakers(
+        in url: URL,
+        diarizer: SpeakerDiarizer,
+        progress: @escaping @Sendable (Double) -> Void
+    ) async throws -> [SpeakerSpan]? {
+        let spans = try await diarizer.speakerSpans(in: url, progress: progress)
+        guard !spans.isEmpty else {
+            logger.error("Speaker separation found no speech in \(url.lastPathComponent, privacy: .public), falling back to Me/Them")
+            return nil
+        }
+        return MeetingTurns.numberingSpeakers(spans)
     }
 
     static func isCall(systemSpeech: [ClosedRange<TimeInterval>]) -> Bool {

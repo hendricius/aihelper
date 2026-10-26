@@ -135,11 +135,17 @@ Press `⌃⌥⌘⇧N` (Caps Lock + N) when a call starts and again when it ends 
 menu-bar popover. Nothing joins the call: AIHelper records two tracks, your microphone and the audio
 your Mac plays, so every call app works the same, as do videos and in-person meetings.
 
-When you stop, AIHelper finds the speech in each track, sends each turn to your transcription
-provider (AI Coordinator when it has a key, otherwise the active provider) and puts the parts back
-together in order. Your microphone is labelled *Me* and the call *Them*; rename a speaker once and the
-whole transcript follows. If the microphone also picked up the call through your speakers, those
-duplicate lines are dropped. Transcripts live in **Meetings** (from the popover), one folder each
+When you stop, AIHelper finds the speech in each track, works out who is speaking, sends each turn
+to your transcription provider (AI Coordinator when it has a key, otherwise the active provider) and
+puts the parts back together in order. Your microphone is *Me*; the people on the call become
+*Speaker 1*, *Speaker 2*, … (in person, everyone around the microphone does). Rename a speaker once
+and the whole transcript follows. If the microphone also picked up the call through your speakers,
+those duplicate lines are dropped.
+
+Telling speakers apart runs on your Mac with [FluidAudio](https://github.com/FluidInference/FluidAudio)
+(pyannote and WeSpeaker models on the Neural Engine); no audio is sent anywhere for it. The models
+download once from Hugging Face on your first meeting. It needs macOS 15 or later, and can be switched
+off in the Meetings window; without it the transcript says *Me* and *Them*. Transcripts live in **Meetings** (from the popover), one folder each
 under `~/Library/Application Support/AIHelper/Meetings` with a `transcript.md` you can hand to an
 agent. The audio is deleted once every part is transcribed, unless you choose to keep it.
 

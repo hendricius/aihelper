@@ -58,6 +58,7 @@ struct MeetingsView: View {
     @ObservedObject private var store = MeetingStore.shared
     @ObservedObject private var recorder = MeetingRecorder.shared
     @AppStorage(MeetingStore.keepAudioKey) private var keepAudio = false
+    @AppStorage(FluidAudioDiarizer.enabledKey) private var separateSpeakers = true
 
     var body: some View {
         NavigationSplitView {
@@ -91,6 +92,13 @@ struct MeetingsView: View {
             .controlSize(.large)
             .tint(recorder.isRecording ? .red : .accentColor)
             .help("\(ShortcutConfig.meetingRecording.displayString) starts and stops a meeting recording")
+
+            Toggle("Tell speakers apart", isOn: $separateSpeakers)
+                .font(.caption)
+                .disabled(!FluidAudioDiarizer.isSupported)
+                .help(FluidAudioDiarizer.isSupported
+                    ? "Labels each person on the call as Speaker 1, 2, … — worked out on this Mac. Off: the transcript says Me and Them."
+                    : "Needs macOS 15 or later. On this Mac the transcript says Me and Them.")
 
             Toggle("Keep audio after transcribing", isOn: $keepAudio)
                 .font(.caption)
@@ -173,6 +181,7 @@ private struct MeetingStatusLabel: View {
 private struct MeetingDetailView: View {
     let meeting: Meeting
     @ObservedObject private var store = MeetingStore.shared
+    @ObservedObject private var transcriber = MeetingTranscriber.shared
     @State private var title = ""
     @State private var confirmDelete = false
 
@@ -251,8 +260,13 @@ private struct MeetingDetailView: View {
         case .transcribing:
             VStack(alignment: .leading, spacing: 6) {
                 if meeting.segments.isEmpty {
-                    ProgressView().controlSize(.small)
-                    Text("Finding who speaks when…").font(.callout).foregroundColor(.secondary)
+                    if let progress = transcriber.speakerProgress, progress.meetingID == meeting.id, progress.fraction > 0 {
+                        ProgressView(value: progress.fraction)
+                        Text("Telling the speakers apart… \(Int(progress.fraction * 100))%").font(.callout).foregroundColor(.secondary)
+                    } else {
+                        ProgressView().controlSize(.small)
+                        Text("Finding who speaks when…").font(.callout).foregroundColor(.secondary)
+                    }
                 } else {
                     ProgressView(value: Double(meeting.transcribedCount + meeting.failedCount), total: Double(meeting.segments.count))
                     Text("Transcribing part \(meeting.transcribedCount + meeting.failedCount) of \(meeting.segments.count)")
@@ -431,9 +445,13 @@ struct MeetingStatusBar: View {
             return "\(source) · \(ShortcutConfig.meetingRecording.displayString) stops"
         }
         if let meeting = transcribing {
-            return meeting.segments.isEmpty
-                ? "Finding who speaks when…"
-                : "Part \(meeting.transcribedCount + meeting.failedCount) of \(meeting.segments.count)"
+            if !meeting.segments.isEmpty {
+                return "Part \(meeting.transcribedCount + meeting.failedCount) of \(meeting.segments.count)"
+            }
+            if let progress = transcriber.speakerProgress, progress.meetingID == meeting.id, progress.fraction > 0 {
+                return "Telling the speakers apart… \(Int(progress.fraction * 100))%"
+            }
+            return "Finding who speaks when…"
         }
         return "\(ShortcutConfig.meetingRecording.displayString) · transcribes everyone on the call"
     }
