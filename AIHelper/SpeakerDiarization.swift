@@ -1,3 +1,8 @@
+// The project links FluidAudio with none of its package traits (Xcode 26.4 and later honour that),
+// which leaves out the NeMo text normalization its ASR and TTS use: a prebuilt Rust library, about
+// 11 MB per architecture. FluidAudio's main branch puts the diarizer behind a trait as well
+// (FluidAudio PR #1001): once a release has it, enable `Diarizer` on the package, which also leaves
+// out TTS, or this file stops compiling.
 import FluidAudio
 import Foundation
 import os.log
