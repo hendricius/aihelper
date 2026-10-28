@@ -757,7 +757,7 @@ struct CaffeineStatusBar: View {
                     .fontWeight(.medium)
 
                 if caffeine.isActive {
-                    Text("Screen won't lock · \(caffeine.remainingText) left")
+                    Text("Screen won't lock · \(caffeine.timeLeftText)")
                         .font(.caption2.monospacedDigit())
                         .foregroundColor(.secondary)
                 } else {
@@ -770,9 +770,10 @@ struct CaffeineStatusBar: View {
             Spacer()
 
             // Duration picker (locked while active — stop first to change it)
-            Menu("\(caffeine.durationHours)h") {
-                ForEach(CaffeineManager.minHours...CaffeineManager.maxHours, id: \.self) { hours in
-                    Button("\(hours) hour\(hours == 1 ? "" : "s")") { caffeine.durationHours = hours }
+            Menu(caffeine.duration.shortLabel) {
+                ForEach(KeepAwakeDuration.choices, id: \.self) { choice in
+                    if choice == .untilTurnedOff { Divider() }
+                    Button(choice.label) { caffeine.duration = choice }
                 }
             }
             .font(.caption2)

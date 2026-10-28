@@ -11,7 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// The unit tests run inside the app. The test copy must not take Caps Lock, the global
     /// shortcuts or the menu bar from the AIHelper you are running, nor reset Caps Lock when it
-    /// quits.
+    /// quits, nor resume your Keep Awake session.
     static let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -36,6 +36,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Start the Caps Lock hyper key if the user enabled it
         HyperKeyManager.shared.startIfEnabled()
+
+        // Keep Awake that was on when the app last quit carries on where it left off.
+        CaffeineManager.shared.restore()
 
         // Build the status item and its popover (see MenuBarController).
         MenuBarController.shared.start()

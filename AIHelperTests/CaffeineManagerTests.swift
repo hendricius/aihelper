@@ -11,6 +11,10 @@ import XCTest
 /// `IOPMCopyAssertionsByProcess` (what this process holds) and
 /// `IOPMCopyAssertionsStatus` (the system-wide aggregate).
 ///
+/// Each test gets its own `CaffeineManager` and its own settings. The tests run inside the
+/// app, so `UserDefaults.standard` is your real AIHelper's preferences: a Keep Awake session
+/// saved there would switch Keep Awake on the next time you launch the app.
+///
 /// On simulating display sleep: an idle-sleep assertion cannot be tested by forcing sleep.
 /// `pmset displaysleepnow` and `IOPMSleepSystem` are *explicit* sleeps and deliberately
 /// bypass every assertion, so a test built on them would fail no matter how correct the
@@ -20,18 +24,22 @@ import XCTest
 @MainActor
 final class CaffeineManagerTests: XCTestCase {
 
-    private var caffeine: CaffeineManager { CaffeineManager.shared }
-    private var originalDuration = CaffeineManager.defaultDurationHours
+    private var suiteName = ""
+    private var defaults: UserDefaults!
+    private var caffeine: CaffeineManager!
 
     override func setUp() async throws {
         try await super.setUp()
-        originalDuration = caffeine.durationHours
-        caffeine.stop()
+        suiteName = "CaffeineManagerTests.\(UUID().uuidString)"
+        defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        caffeine = CaffeineManager(defaults: defaults)
     }
 
     override func tearDown() async throws {
         caffeine.stop()
-        caffeine.durationHours = originalDuration
+        caffeine = nil
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults = nil
         try await super.tearDown()
     }
 
@@ -123,7 +131,7 @@ final class CaffeineManagerTests: XCTestCase {
     // MARK: - Countdown
 
     func testStartSetsTheFullDurationAndCountsDown() async throws {
-        caffeine.durationHours = 2
+        caffeine.duration = .hours(2)
         caffeine.start()
 
         XCTAssertEqual(caffeine.remaining, 2 * 3600, accuracy: 2,
@@ -137,10 +145,11 @@ final class CaffeineManagerTests: XCTestCase {
     }
 
     func testRemainingTextFormatsHoursMinutesSeconds() throws {
-        caffeine.durationHours = 1
+        caffeine.duration = .hours(1)
         caffeine.start()
 
         XCTAssertEqual(caffeine.remainingText, "1:00:00")
+        XCTAssertEqual(caffeine.timeLeftText, "1:00:00 left")
     }
 
     func testRemainingIsZeroWhenInactive() throws {
@@ -149,23 +158,165 @@ final class CaffeineManagerTests: XCTestCase {
         XCTAssertEqual(caffeine.remainingText, "0:00")
     }
 
+    /// Runs out on its own, and a session that has ended is not resumed by the next launch.
+    func testSessionEndsOnItsOwnAndIsForgotten() async throws {
+        defaults.set(Date().addingTimeInterval(1.5), forKey: CaffeineManager.activeUntilKey)
+        caffeine.restore()
+        XCTAssertTrue(caffeine.isActive)
+
+        try await Task.sleep(for: .milliseconds(4_000))
+
+        XCTAssertFalse(caffeine.isActive, "Keep Awake should switch off once its time is up")
+        XCTAssertTrue(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).isEmpty)
+        XCTAssertNil(defaults.object(forKey: CaffeineManager.activeUntilKey),
+                     "an expired session must not come back on the next launch")
+    }
+
+    // MARK: - Until I turn it off
+
+    func testUntilTurnedOffStaysOnWithoutACountdown() async throws {
+        caffeine.duration = .untilTurnedOff
+        caffeine.start()
+
+        XCTAssertTrue(caffeine.isActive)
+        XCTAssertNil(caffeine.endDate, "a session without a limit has no end date")
+        XCTAssertEqual(caffeine.timeLeftText, "no time limit")
+        XCTAssertEqual(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).count, 1)
+
+        try await Task.sleep(for: .milliseconds(1_400))
+
+        XCTAssertTrue(caffeine.isActive, "it must keep going until switched off")
+        XCTAssertEqual(caffeine.remaining, 0)
+        XCTAssertEqual(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).count, 1)
+    }
+
+    func testUntilTurnedOffStopsWhenSwitchedOff() throws {
+        caffeine.duration = .untilTurnedOff
+        caffeine.toggle()
+        XCTAssertTrue(caffeine.isActive)
+
+        caffeine.toggle()
+
+        XCTAssertFalse(caffeine.isActive)
+        XCTAssertTrue(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).isEmpty)
+    }
+
+    // MARK: - Carrying on after a relaunch
+
+    /// The next launch is a new `CaffeineManager` reading the same settings.
+    func testATimedSessionCarriesOnAfterARelaunchWithItsOriginalEnd() throws {
+        caffeine.duration = .hours(2)
+        caffeine.start()
+        let end = try XCTUnwrap(caffeine.endDate)
+
+        let relaunched = CaffeineManager(defaults: defaults)
+        defer { relaunched.stop() }
+        relaunched.restore()
+
+        XCTAssertTrue(relaunched.isActive)
+        let resumedEnd = try XCTUnwrap(relaunched.endDate)
+        XCTAssertEqual(resumedEnd.timeIntervalSince(end), 0, accuracy: 1,
+                       "a relaunch should keep the original end time, not start the hours over")
+    }
+
+    func testUntilTurnedOffCarriesOnAfterARelaunch() throws {
+        caffeine.duration = .untilTurnedOff
+        caffeine.start()
+
+        let relaunched = CaffeineManager(defaults: defaults)
+        defer { relaunched.stop() }
+        relaunched.restore()
+
+        XCTAssertTrue(relaunched.isActive)
+        XCTAssertNil(relaunched.endDate)
+    }
+
+    func testRestoreResumesASavedSession() throws {
+        defaults.set(Date().addingTimeInterval(30 * 60), forKey: CaffeineManager.activeUntilKey)
+
+        caffeine.restore()
+
+        XCTAssertTrue(caffeine.isActive)
+        XCTAssertEqual(caffeine.remaining, 30 * 60, accuracy: 2)
+        XCTAssertEqual(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).count, 1,
+                       "resuming must take the assertion again — macOS dropped it when the app quit")
+    }
+
+    func testStopForgetsTheSession() throws {
+        caffeine.start()
+        XCTAssertNotNil(defaults.object(forKey: CaffeineManager.activeUntilKey))
+
+        caffeine.stop()
+
+        XCTAssertNil(defaults.object(forKey: CaffeineManager.activeUntilKey))
+        let relaunched = CaffeineManager(defaults: defaults)
+        relaunched.restore()
+        XCTAssertFalse(relaunched.isActive, "switched off means it stays off after a relaunch")
+    }
+
+    func testRestoreDoesNothingWhenKeepAwakeWasOff() throws {
+        caffeine.restore()
+
+        XCTAssertFalse(caffeine.isActive)
+        XCTAssertTrue(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).isEmpty)
+    }
+
+    func testRestoreSkipsASessionThatRanOutWhileTheAppWasClosed() throws {
+        defaults.set(Date().addingTimeInterval(-60), forKey: CaffeineManager.activeUntilKey)
+
+        caffeine.restore()
+
+        XCTAssertFalse(caffeine.isActive)
+        XCTAssertTrue(Self.ownAssertions(ofType: kIOPMAssertionTypePreventUserIdleDisplaySleep).isEmpty)
+        XCTAssertNil(defaults.object(forKey: CaffeineManager.activeUntilKey))
+    }
+
+    func testRestoreNeverRunsLongerThanTheLongestDuration() throws {
+        defaults.set(Date().addingTimeInterval(48 * 3600), forKey: CaffeineManager.activeUntilKey)
+
+        caffeine.restore()
+
+        XCTAssertTrue(caffeine.isActive)
+        XCTAssertLessThanOrEqual(caffeine.remaining, TimeInterval(KeepAwakeDuration.maxHours) * 3600 + 1)
+    }
+
     // MARK: - Duration setting
 
+    func testChoicesOfferEachHourThenUntilTurnedOff() throws {
+        XCTAssertEqual(KeepAwakeDuration.choices,
+                       [.hours(1), .hours(2), .hours(3), .hours(4), .hours(5), .untilTurnedOff])
+        XCTAssertEqual(KeepAwakeDuration.hours(1).label, "1 hour")
+        XCTAssertEqual(KeepAwakeDuration.hours(4).label, "4 hours")
+        XCTAssertEqual(KeepAwakeDuration.untilTurnedOff.label, "Until I turn it off")
+    }
+
+    func testDurationDefaultsToOneHour() throws {
+        XCTAssertEqual(caffeine.duration, .hours(1))
+    }
+
     func testDurationIsClampedToTheSupportedRange() throws {
-        caffeine.durationHours = 0
-        XCTAssertEqual(caffeine.durationHours, CaffeineManager.minHours)
+        caffeine.duration = .hours(0)
+        XCTAssertEqual(caffeine.duration, .hours(KeepAwakeDuration.minHours))
 
-        caffeine.durationHours = 99
-        XCTAssertEqual(caffeine.durationHours, CaffeineManager.maxHours)
+        caffeine.duration = .hours(99)
+        XCTAssertEqual(caffeine.duration, .hours(KeepAwakeDuration.maxHours))
 
-        caffeine.durationHours = 3
-        XCTAssertEqual(caffeine.durationHours, 3)
+        caffeine.duration = .hours(3)
+        XCTAssertEqual(caffeine.duration, .hours(3))
     }
 
     func testDurationIsPersisted() throws {
-        caffeine.durationHours = 4
+        caffeine.duration = .hours(4)
 
-        XCTAssertEqual(UserDefaults.standard.integer(forKey: CaffeineManager.durationKey), 4,
+        XCTAssertEqual(defaults.integer(forKey: CaffeineManager.durationKey), 4)
+        XCTAssertEqual(CaffeineManager(defaults: defaults).duration, .hours(4),
+                       "the chosen duration should survive a relaunch")
+    }
+
+    func testUntilTurnedOffIsPersisted() throws {
+        caffeine.duration = .untilTurnedOff
+
+        XCTAssertEqual(CaffeineManager(defaults: defaults).duration, .untilTurnedOff,
                        "the chosen duration should survive a relaunch")
     }
 
@@ -188,7 +339,7 @@ final class CaffeineManagerTests: XCTestCase {
         try XCTSkipUnless(timeout > 0, "display sleep is disabled on this Mac, so there is nothing to prevent")
         try XCTSkipUnless(timeout <= 3, "display sleep timeout is \(timeout) min — too long to wait for in a test")
 
-        caffeine.durationHours = CaffeineManager.maxHours
+        caffeine.duration = .hours(KeepAwakeDuration.maxHours)
         caffeine.start()
 
         let wait = Double(timeout) * 60 + 45

@@ -51,7 +51,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
 - 🧠 Custom vocabulary to improve spelling of names and technical terms
 - 📋 Clipboard history manager (`⌃⌥⌘⇧C`)
 - 📸 **[Screenshot Notes](#screenshot-notes)** — grab the front window (`⌃⌥⌘⇧A`), drag boxes on the frozen image and dictate a note per box; `⌃⌥⌘⇧D` turns the whole session into a PDF on your clipboard, ready to paste into Claude, ChatGPT or an agent. Keeps a history of recent sessions so you can export one again
-- ☕ **Keep Awake** — a built-in [Caffeine](https://www.caffeine-app.net/): keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, so you don't need the separate Caffeine app. The menu-bar mic fills in while it's active, like Caffeine's full cup
+- ☕ **Keep Awake** — a built-in [Caffeine](https://www.caffeine-app.net/): keep your Mac awake so the screen won't lock, for a chosen 1–5 hours or until you turn it off, so you don't need the separate Caffeine app. It carries on after the app restarts. The menu-bar mic fills in while it's active, like Caffeine's full cup
 - 📜 Transcription history with audio playback and full API debug logging — a growing archive of your own voice and phrasing (handy for, say, training a voice clone of yourself later)
 
 ## Screenshots
@@ -90,7 +90,7 @@ Lock behavior is restored automatically when you quit AIHelper. You can turn it 
   <tr>
     <td width="50%" valign="top">
       <img src="docs/screenshots/keep-awake.png" alt="Keep Awake settings with the keep-awake toggle, live countdown, and 1–5 hour duration picker"><br>
-      <b>Keep Awake (built-in Caffeine)</b> — replaces the classic <a href="https://www.caffeine-app.net/">Caffeine</a> app: keep your Mac awake so the screen won't lock, for a chosen 1–5 hours, then it sleeps normally again.
+      <b>Keep Awake (built-in Caffeine)</b> — replaces the classic <a href="https://www.caffeine-app.net/">Caffeine</a> app: keep your Mac awake so the screen won't lock, for a chosen 1–5 hours (then it sleeps normally again) or until you turn it off.
     </td>
     <td width="50%" valign="top">
       <img src="docs/screenshots/keep-awake-menubar.png" alt="The menu-bar microphone changes from outline to filled when Keep Awake is on"><br>
@@ -208,7 +208,7 @@ AIHelper/
 ├── ContentView.swift                  # Menu-bar popover UI
 ├── SettingsView.swift                 # Settings (API, vocabulary, wake/stop word, hyper key, dev machines, history, about)
 ├── HyperKeyManager.swift              # Built-in Caps Lock → ⌃⌥⌘⇧ hyper key
-├── CaffeineManager.swift              # Keep Awake (IOKit power assertion, 1–5h)
+├── CaffeineManager.swift              # Keep Awake (IOKit power assertion, 1–5h or until turned off)
 ├── APIProvider.swift                  # OpenAI / AI Coordinator provider abstraction
 ├── WhisperService.swift               # Audio transcription (provider-routed)
 ├── FormattingService.swift            # Email / message formatting (provider-routed)

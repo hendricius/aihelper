@@ -130,7 +130,7 @@ struct SettingsView: View {
                     settingsRow(
                         icon: "cup.and.saucer",
                         title: "Keep Awake",
-                        subtitle: caffeine.isActive ? "On — \(caffeine.remainingText) left" : "Off · \(caffeine.durationHours)h",
+                        subtitle: caffeine.isActive ? "On — \(caffeine.timeLeftText)" : "Off · \(caffeine.duration.shortLabel)",
                         section: .caffeine
                     )
 
@@ -1040,22 +1040,22 @@ struct SettingsView: View {
                     HStack {
                         Text("Time remaining")
                         Spacer()
-                        Text("\(caffeine.remainingText) left")
+                        Text(caffeine.timeLeftText)
                             .font(.body.monospacedDigit())
                             .foregroundColor(.secondary)
                     }
                 }
 
-                Picker("Duration", selection: $caffeine.durationHours) {
-                    ForEach(CaffeineManager.minHours...CaffeineManager.maxHours, id: \.self) { hours in
-                        Text("\(hours) hour\(hours == 1 ? "" : "s")").tag(hours)
+                Picker("Duration", selection: $caffeine.duration) {
+                    ForEach(KeepAwakeDuration.choices, id: \.self) { choice in
+                        Text(choice.label).tag(choice)
                     }
                 }
                 .disabled(caffeine.isActive)
             } header: {
                 Label("Keep Awake", systemImage: "cup.and.saucer")
             } footer: {
-                Text("Keeps the display awake for the chosen duration so the screen saver never starts and the Mac won't lock on its own, then lets it sleep normally again — like the Caffeine app, built in. Stop it to change the duration.")
+                Text("Keeps the display awake so the screen saver never starts and the Mac won't lock on its own — like the Caffeine app, built in. After the chosen hours it lets the Mac sleep normally again; “Until I turn it off” stays on until you switch it off. It carries on if the app restarts. Stop it to change the duration.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -1064,7 +1064,8 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     featureRow(icon: "display", text: "Keeps the screen on so it won't lock on its own")
                     featureRow(icon: "menubar.arrow.up.rectangle", text: "Menu-bar mic fills in while it's active")
-                    featureRow(icon: "timer", text: "Turns itself off automatically after the duration")
+                    featureRow(icon: "timer", text: "Turns itself off after 1–5 hours, or stays on until you stop it")
+                    featureRow(icon: "arrow.clockwise", text: "Carries on after the app restarts")
                     featureRow(icon: "bolt.slash", text: "No special permissions required")
                 }
             } header: {
