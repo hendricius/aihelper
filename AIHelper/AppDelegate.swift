@@ -9,12 +9,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var lastHotkeyTime: Date = .distantPast
     private let hotkeyDebounceInterval: TimeInterval = 0.3
 
+    /// The unit tests run inside the app. The test copy must not take Caps Lock, the global
+    /// shortcuts or the menu bar from the AIHelper you are running, nor reset Caps Lock when it
+    /// quits.
+    static let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Hyper key (Caps Lock → ⌃⌥⌘⇧) is ON by default for new installs.
         // An explicit user toggle is stored in the standard domain and overrides this.
         UserDefaults.standard.register(defaults: [HyperKeyManager.enabledKey: true])
 
         ScreenshotNotesLog.installUncaughtExceptionHandler()
+
+        guard !Self.isRunningTests else { return }
 
         // Check all permissions
         Task { @MainActor in
@@ -230,6 +237,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // So the onboarding window closing on quit (e.g. the Input Monitoring "Quit & Reopen")
         // resumes next launch instead of being marked as dismissed.
         WelcomeWindowController.appIsTerminating = true
+        guard !Self.isRunningTests else { return }
         GlobalKeyboardShortcut.shared.unregister()
         // Restore normal Caps Lock so it isn't left remapped after we quit.
         HyperKeyManager.shared.resetMapping()
